@@ -3,22 +3,13 @@ output "tf_sg" {
   value       = aws_security_group.tf_sg.id
 }
 
-# output "my_cidr" {
-#   description = "CIDR idenfitied as only-this-host, i.e., my-public-IP/32"
-#   value       = join(",", values(data.external.my_cidr.result))
-# }
-# 
-# output "ssh_key_name" {
-#   description = "Name of the dynamically generated ssh key for connection to the EC2 instance"
-#   value       = var.ssh_key_name
-# }
-# 
-# output "private_key" {
-#   description = "Private key string generated for ssh_key_name"
-#   value       = join(",", values(data.external.private_key.result))
-# }
-# 
-# output "source" {
-#   description = "Path to this location"
-#   value = path.module
-# }
+output "cidr_block" {
+  # value = [join(",", values(data.external.my_cidr.result))]
+  # value = join(",", values(data.external.my_cidr.result))
+  # value = split(",", join(",", values(data.external.my_cidr.result)))
+  value = split(" ", values(data.external.my_cidr.result)[0])
+}
+
+output "goal" {
+  value = ["143.244.32.0/19", "143.244.46.0/24"]
+}

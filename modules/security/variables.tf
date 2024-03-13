@@ -7,3 +7,9 @@ variable "sg_ports" {
     443 : "HTTPS",
   }
 }
+
+variable "cidr_scope" {
+  type        = string
+  description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
+  default     = "my_host"
+}

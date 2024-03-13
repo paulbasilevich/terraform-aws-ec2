@@ -1,15 +1,14 @@
 module "provider" { source = "./modules/provider" }
-module "security" { source = "./modules/security" }
+module "key_pair" { source = "./modules/key_pair" }
+
+module "security" {
+  source     = "./modules/security"
+  cidr_scope = "my_cidr"
+}
 
 module "ami_data" {
   source = "./modules/ami_data"
   # ami_name = ["ubuntu-pro-server/images/hvm-ssd/ubuntu-focal-20.04-amd64-pro-server-*"]
-}
-
-# TODO: Generate key_pair as a resource, so that it could be reused at instance destroy/recreate, e.g., ami change
-module "key_pair" {
-  source       = "./modules/key_pair"
-  ssh_key_name = "kot"
 }
 
 resource "aws_instance" "tf" {
@@ -30,8 +29,17 @@ resource "aws_instance" "tf" {
     Name = each.key
   }
 
+  lifecycle {
+    # ignore_changes = all
+    # ignore_changes = [tags, instance_type]
+    # create_before_destroy = true
+    # prevent_destroy = true
+  }
+
+  # For demo purposes, the following provisioner installs nginx if one of the var's is "true"
+  # Excercises the installation scenario pertaining to the AMI type in use (amazon-linux or ubuntu)
   provisioner "remote-exec" {
-    inline = var.install_nginx ? startswith(module.ami_data.ami_name, "amzn2-") ? [
+    inline = var.install_nginx || var.demo_nginx ? startswith(module.ami_data.ami_name, "amzn2-") ? [
       "sudo yum update -y",
       "sudo amazon-linux-extras install -y nginx1",
       "sudo systemctl start nginx",
@@ -44,11 +52,19 @@ resource "aws_instance" "tf" {
       type        = "ssh"
       host        = self.public_ip
       user        = module.ami_data.user
-      private_key = module.key_pair.private_key
+      private_key = file("~/.ssh/${module.key_pair.ssh_key_name}_rsa")
     }
 
   }
 
+  # For demo purposes, the following provisioner opens the nginx home page
+  # expected to be mapped to public_ip of the host being deployed.
+  provisioner "local-exec" {
+    command = var.demo_nginx ? "open http://${aws_instance.tf["tf"].public_ip}" : "echo -n"
+  }
+
+  # This provisioner updates ~/.ssh/config file to provide the "simplistic" access to the target host:
+  #     ssh tf
   provisioner "local-exec" {
     command = <<-EOT
       ${module.key_pair.source}/append_ssh_config.sh \
@@ -57,26 +73,5 @@ resource "aws_instance" "tf" {
         ${module.ami_data.user}
     EOT
   }
-
-  provisioner "local-exec" {
-    command = var.install_nginx && var.demo_nginx ? "open http://${aws_instance.tf["tf"].public_ip}" : "echo -n"
-  }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = <<-EOT
-      aws ec2 delete-key-pair --key-name $(
-        aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName'
-      )
-      rm -f ~/.ssh/$( aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName').pem
-      sed -E -i -e "/^Host[[:space:]]+$(\
-        aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName')$/,/^$/d" ~/.ssh/config
-      if [[ -f ~/.ssh/config_backup_tf ]]; then mv -f ~/.ssh/config_backup_tf ~/.ssh/config; fi
-    EOT
-  }
-
 }
 

@@ -10,7 +10,8 @@ resource "aws_security_group" "tf_sg" {
       to_port     = port.key
       description = port.value
       protocol    = "tcp"
-      cidr_blocks = [join(",", values(data.external.my_cidr.result))]
+      # cidr_blocks = [join(",", values(data.external.my_cidr.result))]
+      cidr_blocks = split(" ", values(data.external.my_cidr.result)[0])
     }
   }
 

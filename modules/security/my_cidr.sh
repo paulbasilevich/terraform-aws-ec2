@@ -1,5 +1,29 @@
 #!/usr/bin/env bash
 
+eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope)"')"
+
+case "$CIDR_SCOPE" in
+    "my_host") RANGE="$( curl -4 -s https://ifconfig.me/ip )/32" ;;
+    "my_cidr") RAW="$( whois $( dig TXT -4 +short o-o.myaddr.l.google.com @ns3.google.com \
+               | tr -d "\"" ) | grep "CIDR\|route" \
+               | sed -E -e "s~([^[:space:]]*[[:space:]]+)([^[:space:]]+)([[:print:]]*)~\2~")"
+               unset RANGE
+               fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"
+               for x in $( echo -e "$RAW" | egrep -x -e "$fmt_cidr" )
+               do
+                   if [[ -n "$RANGE" ]]; then RANGE+=" "; fi
+                   RANGE+=$x
+               done
+               ;;
+            *) RANGE="$( basename "$0" ): <$CIDR_SCOPE>"
+               ;;
+esac
+
+jq -n --arg cidr_range "$RANGE" '{"cidr_range":$cidr_range}'
+
+
+#
+#
 # -- This is a working sample script compatible with Terraform "external" provider.
 #    Specifically retrieves the IP address of the calling environment and builds the CIDR appending "/32".
 
@@ -22,5 +46,4 @@
 
 # Example:      cidr_blocks = [join(",", values(data.external.my_cidr.result))]
 
-echo "{\"a\": \"$( dig -4 +short myip.opendns.com @resolver3.opendns.com )/32\"}"
-
+# echo "{\"a\": \"$( curl -4 -s https://ifconfig.me/ip )/32\"}"
