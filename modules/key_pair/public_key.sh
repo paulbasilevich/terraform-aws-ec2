@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# This script leverages ssh-keygen utility to generate the ssh keys
+# and return the public key to the calling terraform data source.
+
+# Refer to https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external
+# for details pertaining to the bash-terraform interface 
+
 eval "$(jq -r '@sh "KEY_NAME=\(.ssh_key_name) SSH_TAG=\(.ssh_config_tag)"')"
 # SSH_TAG is merely to demonstrate multiple input json key-pairs.
 # Here .ssh_key_name is the only attribute retrievable from "self" - a must for destroyer-provisioner.

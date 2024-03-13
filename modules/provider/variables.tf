@@ -1,5 +1,6 @@
 variable "profile" {
-  default = "Home"
+  description = "The sought AWS profile can be updated here as needed"
+  default = "default"
 }
 
 variable "region" {

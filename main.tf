@@ -3,7 +3,14 @@ module "key_pair" { source = "./modules/key_pair" }
 
 module "security" {
   source     = "./modules/security"
+  
+  # vvv This setting assigns the curent host's CIDR
+  # as the CIDR block of the target security group vvv 
   cidr_scope = "my_cidr"
+
+  # cidr_scope = "my_host"
+  # ^^^ Alternatively the above setting assigns "this-IP/32"
+  # as the CIDR block of the target security group ^^^
 }
 
 module "ami_data" {

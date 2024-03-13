@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+# Refer to https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external
+# for details pertaining to the bash-terraform interface
+
+# This script evaluates CIDR block for the security group
+# and returns the value to the calling "external.my_cidr" data source
+
+# The script is "self-aware" of the hosting environment.
+# The two options for CIDR block are available:
+#   - <my_host>     this_IP/32
+#   - <my_cird>     the CIDR this host belongs in
+
 eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope)"')"
 
 case "$CIDR_SCOPE" in

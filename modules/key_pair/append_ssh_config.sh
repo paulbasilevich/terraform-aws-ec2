@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# This script updates ~/.ssh directory, including "config" file
+# in a bid to support ssh connection to the target EC2 instance
+# by the following simplistic invocation:
+#
+#       ssh tf
+#
+# The original config file gets backed up for further restoration
+# in the process of destruction of "null_resource.revert_ssh" resource
+
 config_file=~/.ssh/config
 config_save=~/.ssh/config_backup_tf
 

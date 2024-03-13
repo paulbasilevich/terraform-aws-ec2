@@ -8,23 +8,29 @@ data "external" "public_key" {
 # ^^^^^^^^^^ Must match key_name and config_tag
 # as key_name is the only relevant attribute retrievable from "self" -
 # a must for provisioner-destroyer.
-#
+# In fact, "ssh_config_tag" is a legacy setting no longer used
 
+# This resource leverages "ssh-keygen" function
+# through "public_ip.sh" script interfaced via "external.public_key" data source
+# defined above
 resource "aws_key_pair" "tf" {
   key_name = local.ssh_key_name
   public_key = join(",", values(data.external.public_key.result))
 }
 
+# The purpose of this resource is to clean up ~/.ssh directory
+# Updated to support "ssh tf" invocation an the instance creation time
 resource "null_resource" "revert_ssh" {
   provisioner "local-exec" {
     when    = destroy
     command = <<-EOT
-      rm -f ~/.ssh/$( grep ssh_key_name ${path.module}/variables.tf | cut -d'=' -f2 | tr -d '" ' )_rsa
+      rm -f ~/.ssh/$( grep -e "^[[:space:]]*ssh_key_name[[:space:]]*=" ${path.module}/variables.tf \
+        | cut -d'=' -f2 | tr -d '" ' )_rsa
       sed -E -i \
-      -e "/^Host[[:space:]]+$( grep ssh_key_name ${path.module}/variables.tf | cut -d'=' -f2 | tr -d '" ' )$/,/^$/d" \
-      ~/.ssh/config
+      -e "/^Host[[:space:]]+$( grep -e "^[[:space:]]*ssh_key_name[[:space:]]*=" ${path.module}/variables.tf \
+        | cut -d'=' -f2 | tr -d '" ' )$/,/^$/d" ~/.ssh/config
       if [[ -f ~/.ssh/config_backup_tf ]]; then mv -f ~/.ssh/config_backup_tf ~/.ssh/config; fi
     EOT
   }
 }
-    
+
