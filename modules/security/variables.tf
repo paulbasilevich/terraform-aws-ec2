@@ -13,3 +13,7 @@ variable "cidr_scope" {
   description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
   default     = "my_host"
 }
+
+locals {
+  cidr_blocks = split(" ", values(data.external.my_cidr.result)[0])
+}

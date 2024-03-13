@@ -3,11 +3,12 @@ output "tf_sg" {
   value       = aws_security_group.tf_sg.id
 }
 
-output "cidr_block" {
+output "cidr_blocks" {
   # value = [join(",", values(data.external.my_cidr.result))]
   # value = join(",", values(data.external.my_cidr.result))
   # value = split(",", join(",", values(data.external.my_cidr.result)))
-  value = split(" ", values(data.external.my_cidr.result)[0])
+  # value = split(" ", values(data.external.my_cidr.result)[0])
+  value = local.cidr_blocks
 }
 
 output "goal" {

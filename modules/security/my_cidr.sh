@@ -5,7 +5,7 @@ eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope)"')"
 case "$CIDR_SCOPE" in
     "my_host") RANGE="$( curl -4 -s https://ifconfig.me/ip )/32" ;;
     "my_cidr") RAW="$( whois $( dig TXT -4 +short o-o.myaddr.l.google.com @ns3.google.com \
-               | tr -d "\"" ) | grep "CIDR\|route" \
+               | tr -d "\"" ) | grep "CIDR:\|route:" \
                | sed -E -e "s~([^[:space:]]*[[:space:]]+)([^[:space:]]+)([[:print:]]*)~\2~")"
                unset RANGE
                fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"

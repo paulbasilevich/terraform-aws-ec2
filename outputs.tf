@@ -17,10 +17,7 @@ output "now" {
   value       = local.time
 }
 
-output "cidr" {
-  value = module.security.cidr_block
+output "cbl" {
+  value = join(", ", module.security.cidr_blocks)
 }
 
-# output "goal" {
-#   value = module.security.goal
-# }
