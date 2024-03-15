@@ -6,7 +6,8 @@ module "security" {
   
   # vvv This setting assigns the curent host's CIDR
   # as the CIDR block of the target security group vvv 
-  cidr_scope = "my_cidr"
+  # cidr_scope = "my_cidr"
+  cidr_scope = var.cidr_scope
 
   # cidr_scope = "my_host"
   # ^^^ Alternatively the above setting assigns "this-IP/32"
@@ -15,7 +16,7 @@ module "security" {
 
 module "ami_data" {
   source = "./modules/ami_data"
-  # ami_name = ["ubuntu-pro-server/images/hvm-ssd/ubuntu-focal-20.04-amd64-pro-server-*"]
+  ami_name = var.ami_name
 }
 
 resource "aws_instance" "tf" {
