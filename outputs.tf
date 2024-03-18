@@ -18,7 +18,7 @@ output "now" {
 }
 
 output "cbl" {
-  description = "CIDR block evaluated as either <my_host> or <my_cidr> option" 
-  value = join(", ", module.security.cidr_blocks)
+  description = "CIDR block evaluated as either <my_host> or <my_cidr> option"
+  value       = join(", ", module.security.cidr_blocks)
 }
 

@@ -2,8 +2,8 @@ module "provider" { source = "./modules/provider" }
 module "key_pair" { source = "./modules/key_pair" }
 
 module "security" {
-  source     = "./modules/security"
-  
+  source = "./modules/security"
+
   # vvv This setting assigns the curent host's CIDR
   # as the CIDR block of the target security group vvv 
   # cidr_scope = "my_cidr"
@@ -15,7 +15,7 @@ module "security" {
 }
 
 module "ami_data" {
-  source = "./modules/ami_data"
+  source   = "./modules/ami_data"
   ami_name = var.ami_name
 }
 
