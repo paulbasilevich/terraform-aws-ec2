@@ -37,6 +37,9 @@ main(){
         "l")        # Local backend
             if [[ -s "$infra_source" ]]
             then
+                # Save the current workspace:
+                ws_save="$( terraform workspace show )"
+
                 # terraform init -migrate-state   # This call does not help clearing off S3 binding.
 	            # Delete dynamodb table vvvvv
 		        aws dynamodb delete-table --table-name "$dynamodb_table" --region "$region" > /dev/null 2>&1
@@ -55,6 +58,10 @@ main(){
                 # vvv Must remove .terraform folder to "erase the memory" of S3 backend
                 rm -rf .terraform
                 terraform init
+                
+                # Workspaces set in remote backend happen to "survive" this transition
+                # Just need to restore the current workspace, "quietly":
+                terraform workspace select "$ws_save" > /dev/null
             fi
             echo "Local backend appears in effect."
             ;;
@@ -68,6 +75,9 @@ main(){
                 do
                     wslist[${#wslist[@]}]="$x"
                 done
+
+                # Also save the current workspace:
+                ws_save="$( terraform workspace show )"
 
                 # Generate S3 backend definitions in a .tf file:
                 cat > "$infra_source" << BEND
@@ -110,11 +120,13 @@ BEND
                 then
                     for x in ${wslist[@]}
                     do
-                        terraform workspace new "$x"
+                        terraform workspace new "$x" > /dev/null
                     done
 
-                    terraform workspace select default
-                    terraform workspace list
+                    # This call may stay within this "if":
+                    # If there in no $wslist, then the only available workspace is default,
+                    # which there is no need to reset for.
+                    terraform workspace select "$ws_save" > /dev/null
                 fi
             fi
             echo "Remote backend appears in effect."
