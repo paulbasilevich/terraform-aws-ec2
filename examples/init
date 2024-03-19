@@ -18,7 +18,7 @@ done
 popd > /dev/null
 
 # Scan variables.tf for the name of workspaces and create the worspaces:
-for ws in $( sed -E -n "/^[[:space:]]*default[[:space:]]*=[[:space:]]*{$/,/^[[:space:]]*}$/p" variables.tf \
+for ws in $( sed -E -n "/^[[:space:]]*default[[:space:]]*=[[:space:]]*\{$/,/^[[:space:]]*\}$/p" variables.tf \
     | grep -v "{\|}\|default" | awk '{print $1}' | sort -u )
 do
     terraform workspace new "$ws"
