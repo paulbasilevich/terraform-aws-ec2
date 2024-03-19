@@ -1,3 +1,8 @@
+locals {
+  default_ami_name   = ["amzn2-ami-kernel-5.10-hvm-*"]
+  default_cidr_scope = "my_host"
+}
+
 variable "ami_name" {
   type        = map(list(string))
   description = "Name pattern to find the sought AMI by"

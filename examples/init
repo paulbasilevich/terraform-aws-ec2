@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Copy the example files to the root folder by running:
+#       .terraform/modules/ec2/examples/init
+
+master="$( basename "${BASH_SOURCE[0]}" )"
+origin="$( dirname "${BASH_SOURCE[0]}" )"
+target="$( pwd )"
+
+# Get inside the module where the example files are stored
+pushd "$origin" > /dev/null
+for x in $( ls -1 | grep -v -x "$master" )
+do
+    cp "$x" "$target"
+done
+
+# Return to the root folder
+popd > /dev/null
+
+# Scan variables.tf for the name of workspaces and create the worspaces:
+for ws in $( sed -E -n "/^[[:space:]]*default[[:space:]]*=[[:space:]]*{$/,/^[[:space:]]*}$/p" variables.tf \
+    | grep -v "{\|}\|default" | awk '{print $1}' | sort -u )
+do
+    terraform workspace new "$ws"
+done
+
+terraform workspace select default
+echo "Available workspaces:"
+terraform workspace list
+
+echo "Refer to README.md file for instructions and suggestions."
+
