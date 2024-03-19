@@ -12,3 +12,9 @@ through the following call, its support automatically configured:
             ssh tf
 
 
+Upon completion of the standard Provision Instructions,
+please run the following additional initialization command:
+
+        .terraform/modules/ec2/examples/init
+
+        
