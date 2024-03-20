@@ -18,6 +18,10 @@ To select a <target> workspace (target = amzn| ubuntu | default), run
 To deploy an EC2 instance with access secured to this host, simply run:
         terraform apply -auto-approve
 
+To engage a the "remote-exec" and "local-exec" provisioners in a sample action.
+modify the foregoing invocation as follows:
+        terraform apply -auto-approve -var="demo_nginx=true"
+
 The current workspace defines the AMI type to be used for the target EC2:
     "amazon linux" or "ubuntu" respecively.
 (The default workspace maps to "amazon linux")
