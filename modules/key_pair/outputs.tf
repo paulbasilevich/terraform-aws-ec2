@@ -11,3 +11,8 @@ output "source" {
 output "lan_host_name" {
   value = var.lan_host_name
 }
+
+output "sup" {
+  description = "SSH connection string to a host on LAN where the current VM is running"
+  value       = join(",", values(data.external.sup.result))
+}
