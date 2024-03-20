@@ -7,3 +7,7 @@ output "source" {
   description = "Path to this location"
   value = path.module
 }
+
+output "lan_host_name" {
+  value = var.lan_host_name
+}

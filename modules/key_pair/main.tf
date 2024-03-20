@@ -18,6 +18,20 @@ resource "aws_key_pair" "tf" {
   public_key = join(",", values(data.external.public_key.result))
 }
 
+# This resource generates a command that opens the target EC2 IP as a web site, e.g., nginx
+# It is self-aware of the calling environment type:
+# For Linux, it assumes to be running from a hosted VM with no browser,
+#     and, as such, attempts to SSH to the VM's host expected to be set up in ~/.ssh/config
+#     and identified by "Host" value matching "var.lan_host_name" showing below.
+# For other OS, (tested on mac a.k.a. Darwin), simply leverages "open" command issued locally,
+#     and disgerards the "var.lan_host_name" setting.
+data "external" "sup" {
+  program = ["bash", "${path.module}/ssh_up_from_vm.sh"]
+  query = {
+    host = var.lan_host_name
+  }
+}
+
 # The purpose of this resource is to clean up ~/.ssh directory
 # Updated to support "ssh tf" invocation an the instance creation time
 resource "null_resource" "revert_ssh" {

@@ -68,7 +68,7 @@ resource "aws_instance" "tf" {
   # For demo purposes, the following provisioner opens the nginx home page
   # expected to be mapped to public_ip of the host being deployed.
   provisioner "local-exec" {
-    command = var.demo_nginx ? "open http://${aws_instance.tf["tf"].public_ip}" : "echo -n"
+    command = var.demo_nginx ? "${module.key_pair.sup} http://${aws_instance.tf["tf"].public_ip}" : "echo -n"
   }
 
   # This provisioner updates ~/.ssh/config file to provide the "simplistic" access to the target host:

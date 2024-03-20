@@ -14,12 +14,9 @@ variable "ami_name" {
 }
 
 variable "cidr_scope" {
-  type        = map(string)
+  type        = string
   description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
-  default = {
-    default = "my_host"
-    amzn    = "my_cidr"
-  }
+  default     = "my_host"
 }
 
 variable "install_nginx" {
