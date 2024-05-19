@@ -1,12 +1,15 @@
-variable "sg_ports" {
-  type        = map(any)
-  description = "Ingress ports defined in terraform.tfvars"
-  default = {
-    22 : "SSH",
-    80 : "HTTP",
-    443 : "HTTPS",
-    8000 : "Plaid",
-  }
+variable "env_status" {
+  type        = number
+  description = "Captured the status of the calling environment: 0 - good to go; >0 - fail."
+  default     = 1
+}
+
+locals {
+  env_status = tonumber(join(", ", split(" ", values(data.external.check_env.result)[0])))
+}
+
+locals {
+  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
 }
 
 variable "cidr_scope" {
@@ -22,7 +25,7 @@ variable "extra_cidr" {
 }
 
 locals {
-  cidr_blocks = module.cidr_blk.cidr_blocks
+  cidr_blocks = split(" ", values(data.external.my_cidr.result)[0])
 }
 
 variable "aws_profile" {
@@ -36,5 +39,4 @@ variable "aws_region" {
   description = "Declare the AWS region for this deployment"
   default     = "us-west-2"
 }
-
 

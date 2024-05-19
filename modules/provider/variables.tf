@@ -1,10 +1,13 @@
 variable "profile" {
-  description = "The sought AWS profile can be updated here as needed"
-  default = "default"
+  type        = string
+  description = "Declare the AWS profile to use for this deployment"
+  default     = "Home"
 }
 
 variable "region" {
-  default = "us-west-2"
+  type        = string
+  description = "Declare the AWS region to for this deployment"
+  default     = "us-west-2"
 }
 
 

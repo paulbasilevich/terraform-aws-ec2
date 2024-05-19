@@ -11,7 +11,9 @@
 #   - <my_host>     this_IP/32
 #   - <my_cird>     the CIDR this host belongs in
 
-eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope)"')"
+eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope) EXTRA_CIDR=\(.extra_cidr)"')"
+
+fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"
 
 case "$CIDR_SCOPE" in
     "my_host") RANGE="$( curl -4 -s https://ifconfig.me/ip )/32" ;;
@@ -19,7 +21,6 @@ case "$CIDR_SCOPE" in
                | tr -d "\"" ) | grep "CIDR:\|route:" \
                | sed -E -e "s~([^[:space:]]*[[:space:]]+)([^[:space:]]+)([[:print:]]*)~\2~")"
                unset RANGE
-               fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"
                for x in $( echo -e "$RAW" | egrep -x -e "$fmt_cidr" )
                do
                    if [[ -n "$RANGE" ]]; then RANGE+=" "; fi
@@ -29,6 +30,9 @@ case "$CIDR_SCOPE" in
             *) RANGE="$( basename "$0" ): <$CIDR_SCOPE>"
                ;;
 esac
+
+x="$( echo -e "$EXTRA_CIDR" | egrep -x -e "$fmt_cidr" )"
+if [[ -n "$x" ]]; then RANGE+=" $x"; fi
 
 jq -n --arg cidr_range "$RANGE" '{"cidr_range":$cidr_range}'
 

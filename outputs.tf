@@ -1,24 +1,17 @@
-output "ssh" {
-  description = "Shell command to connect to the target host"
-  value       = "Connect to the deployed instance: >>> ssh ${module.key_pair.ssh_key_name} <<<  "
-}
-
-# output "IP" {
-#   description = "Sample zipmap: instance-id -> public_ip, private_ip"
-#   value = zipmap(
-#     [aws_instance.tf["tf"].id],
-#     [[aws_instance.tf["tf"].public_ip, aws_instance.tf["tf"].private_ip]]
-# 
-#   )
+# output "now" {
+#   description = "Time formatted and adjusted to PST/PDT"
+#   value       = local.time
 # }
-# 
-output "now" {
-  description = "Time formatted and adjusted to PST/PDT"
-  value       = local.time
+
+output "_" {
+  description = "Shell command to connect to the target host"
+  value       = "Connect to the deployed instance: >>> ssh ${module.ec2_inst.ssh_key_name} <<<  "
 }
 
-output "cbl" {
-  description = "CIDR block evaluated as either <my_host> or <my_cidr> option"
-  value       = join(", ", module.security.cidr_blocks)
-}
+# output "public_ip" {
+#   value = module.ec2_inst.public_ip
+# }
 
+# output "region" {
+#   value = module.ec2_inst.aws_region
+# }

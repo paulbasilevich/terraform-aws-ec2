@@ -10,7 +10,7 @@ output "ami_name" {
 
 output "instance_type" {
   description = "Free-tier instance type protected from external override"
-  value       = local.instance_type
+  value       = var.instance_type
 }
 
 output "user" {

@@ -2,7 +2,7 @@
 Terraform module:
 Creates the security group for the sought EC2 instance.
 
-Evaluates the target CIDR block as either "this-IP/32" or "this CIDR"
-as controlled by var.cidr_scope setting.
+Retrieves the target CIDR block setting from the dependency module "cidr_blk":
+        module.cidr_blk.cidr_blocks
 
-Sets up access to ssh, http, and icmp.
+Sets up access to ssh, http, port 8000 (for Plaid), and icmp.

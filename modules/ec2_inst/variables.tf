@@ -1,20 +1,10 @@
-variable "cidr_scope" {
-  type        = string
-  description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
-  default     = "my_host"
-}
-
-variable "extra_cidr" {
-  type        = string
-  description = "CIDR block to be added by hand"
-  default     = "192.168.0.5/32"
+locals {
+  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
 }
 
 variable "ami_name" {
-  type = string
-  #  default = "amzn2-ami-kernel-5.10-hvm-*"
+  type    = string
   default = "ubuntu-pro-server/images/hvm-ssd/ubuntu-focal-20.04-amd64-pro-server-*"
-  # default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-*"
 }
 
 variable "ssh_key_name" {
@@ -23,8 +13,22 @@ variable "ssh_key_name" {
   default     = "plaid"
 }
 
-locals {
-  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
+variable "cidr_scope" {
+  type        = string
+  description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
+  default     = "my_cidr"
+}
+
+variable "extra_cidr" {
+  type        = string
+  description = "CIDR block to be added by hand"
+  default     = "10.0.0.0/16"
+}
+
+variable "plaid_root_directory" {
+  type        = string
+  description = "Local destination of <git clone https://github.com/plaid/quickstart.git>"
+  default     = "plaid"
 }
 
 variable "aws_profile" {
@@ -44,3 +48,4 @@ variable "ec2_instance_type" {
   description = "Type of the target EC2 instance"
   default     = "t2.micro"
 }
+

@@ -1,3 +1,11 @@
+module "cidr_blk" {
+  source      = "../../modules/cidr_blk"
+  cidr_scope  = var.cidr_scope
+  extra_cidr  = var.extra_cidr
+  aws_profile = var.aws_profile
+  aws_region  = var.aws_region
+}
+
 resource "aws_security_group" "tf_sg" {
   name        = "tf_sg"
   description = "Access from the host running TF"
@@ -10,8 +18,6 @@ resource "aws_security_group" "tf_sg" {
       to_port     = port.key
       description = port.value
       protocol    = "tcp"
-      ### cidr_blocks = [join(",", values(data.external.my_cidr.result))]
-      # cidr_blocks = split(" ", values(data.external.my_cidr.result)[0])
       cidr_blocks = local.cidr_blocks
     }
   }
