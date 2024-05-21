@@ -8,7 +8,7 @@ module "security" {
 
 module "ami_data" {
   source           = "../../modules/ami_data"
-  ami_name_pattern = var.ami_name_patern
+  ami_name_pattern = var.ami_name_pattern
   instance_type    = var.ec2_instance_type
 }
 
