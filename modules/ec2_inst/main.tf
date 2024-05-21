@@ -7,9 +7,9 @@ module "security" {
 }
 
 module "ami_data" {
-  source        = "../../modules/ami_data"
-  ami_name      = var.ami_name
-  instance_type = var.ec2_instance_type
+  source           = "../../modules/ami_data"
+  ami_name_pattern = var.ami_name_patern
+  instance_type    = var.ec2_instance_type
 }
 
 module "key_pair" {
@@ -50,8 +50,8 @@ resource "aws_instance" "plaid" {
       "sudo yum install -y tmux",
       "sudo yum install -y git",
       "git --version",
-      "git clone https://github.com/plaid/quickstart.git ${var.plaid_root_directory}",    
-    ] : [
+      "git clone https://github.com/plaid/quickstart.git ${var.plaid_root_directory}",
+      ] : [
       "sudo apt-get update",
       "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -",
       "sudo apt-get install nodejs -y",
