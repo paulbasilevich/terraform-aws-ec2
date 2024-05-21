@@ -15,6 +15,10 @@ output "instance_type" {
 
 output "user" {
   description = "EC2 login account for the AMI type in use"
-  value       = startswith(data.aws_ami.ec2_ami.name, "amzn2-") ? "ec2-user" : "ubuntu"
+  value       = local.yum_pattern ? "ec2-user" : "ubuntu"
 }
 
+output "yum_pattern" {
+  description = "For provisioning in ec2_inst module: if true - yum/ec2-user"
+  value       = local.yum_pattern
+}

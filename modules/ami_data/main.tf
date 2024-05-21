@@ -3,6 +3,6 @@ data "aws_ami" "ec2_ami" {
   owners      = ["amazon"]
   filter {
     name   = "name"
-    values = [var.ami_name]
+    values = [var.ami_name_pattern]
   }
 }

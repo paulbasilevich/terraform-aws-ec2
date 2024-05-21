@@ -10,21 +10,16 @@ variable "extra_cidr" {
   default     = "192.168.0.5/32"
 }
 
-variable "ami_name" {
+variable "ami_name_pattern" {
   type = string
   #  default = "amzn2-ami-kernel-5.10-hvm-*"
-  default = "ubuntu-pro-server/images/hvm-ssd/ubuntu-focal-20.04-amd64-pro-server-*"
-  # default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-*"
+  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-*"
 }
 
 variable "ssh_key_name" {
   type        = string
   description = "Name of the dynamically generated ssh key for connection to the EC2 instance"
   default     = "plaid"
-}
-
-locals {
-  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
 }
 
 variable "aws_profile" {

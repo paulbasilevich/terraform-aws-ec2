@@ -21,10 +21,6 @@ variable "extra_cidr" {
   default     = ""
 }
 
-locals {
-  cidr_blocks = module.cidr_blk.cidr_blocks
-}
-
 variable "aws_profile" {
   type        = string
   description = "Declare the AWS profile to use for this deployment"

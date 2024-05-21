@@ -26,7 +26,3 @@ output "time" {
   description = "Time formatted and adjusted to PST/PDT"
   value       = local.time
 }
-
-output "aws_region" {
-  value = var.aws_region
-}

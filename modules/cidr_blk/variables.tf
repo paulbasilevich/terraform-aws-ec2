@@ -4,14 +4,6 @@ variable "env_status" {
   default     = 1
 }
 
-locals {
-  env_status = tonumber(join(", ", split(" ", values(data.external.check_env.result)[0])))
-}
-
-locals {
-  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
-}
-
 variable "cidr_scope" {
   type        = string
   description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
@@ -22,10 +14,6 @@ variable "extra_cidr" {
   type        = string
   description = "CIDR block to be added by hand"
   default     = ""
-}
-
-locals {
-  cidr_blocks = split(" ", values(data.external.my_cidr.result)[0])
 }
 
 variable "aws_profile" {

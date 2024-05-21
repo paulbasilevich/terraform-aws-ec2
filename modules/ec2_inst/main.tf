@@ -38,16 +38,19 @@ resource "aws_instance" "plaid" {
   }
 
   provisioner "remote-exec" {
-    inline = startswith(module.ami_data.ami_name, "amzn2-") ? [
+    inline = module.ami_data.yum_pattern ? [
       "sudo yum update -y",
-      "curl -sL https://rpm.nodesource.com/setup_20.x | sudo bash -",
+      "curl -sL https://rpm.nodesource.com/setup_20.x | sudo -E bash -",
       "sudo yum install -y nodejs",
       "echo Node",
       "node --version",
       "echo Npm",
       "npm --version",
       "sleep 10",
-      "git clone https://github.com/plaid/quickstart.git ${var.plaid_root_directory}",
+      "sudo yum install -y tmux",
+      "sudo yum install -y git",
+      "git --version",
+      "git clone https://github.com/plaid/quickstart.git ${var.plaid_root_directory}",    
     ] : [
       "sudo apt-get update",
       "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -",

@@ -1,10 +1,6 @@
-locals {
-  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
-}
-
-variable "ami_name" {
+variable "ami_name_pattern" {
   type    = string
-  default = "ubuntu-pro-server/images/hvm-ssd/ubuntu-focal-20.04-amd64-pro-server-*"
+  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-*"
 }
 
 variable "ssh_key_name" {
