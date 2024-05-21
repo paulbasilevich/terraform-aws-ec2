@@ -7,13 +7,14 @@ variable "cidr_scope" {
 variable "extra_cidr" {
   type        = string
   description = "CIDR block to be added by hand"
-  default     = "192.168.0.5/32"
+  default     = "37.19.211.0/24"
 }
 
 variable "ami_name_pattern" {
   type = string
-  #  default = "amzn2-ami-kernel-5.10-hvm-*"
-  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-*"
+  # default = "amzn2-ami-kernel-5.10-hvm-"
+  # default = "RHEL-9.3.0_HVM-"
+  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-"
 }
 
 variable "ssh_key_name" {

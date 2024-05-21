@@ -1,6 +1,9 @@
 variable "ami_name_pattern" {
   type    = string
-  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-*"
+  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-"
+  # default = "RHEL-9.3.0_HVM-"
+  # default = "RHEL-"
+  # default = "amzn2-"
 }
 
 variable "ssh_key_name" {

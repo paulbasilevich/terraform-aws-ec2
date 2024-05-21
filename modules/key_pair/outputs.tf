@@ -13,10 +13,10 @@ output "source" {
   value       = path.module
 }
 
-output "region" {
+output "aws_region" {
   value = module.provider.region
 }
 
-output "profile" {
+output "aws_profile" {
   value = module.provider.profile
 }
