@@ -16,10 +16,6 @@ output "cidr_blocks" {
   value = local.cidr_blocks
 }
 
-output "aws_region" {
-  value = module.provider.region
-}
-
 output "aws_profile" {
   value = module.provider.profile
 }

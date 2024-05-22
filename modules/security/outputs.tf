@@ -3,10 +3,6 @@ output "tf_sg" {
   value       = aws_security_group.tf_sg.id
 }
 
-output "aws_region" {
-  value = module.cidr_blk.aws_region
-}
-
 output "aws_profile" {
   value = module.cidr_blk.aws_profile
 }

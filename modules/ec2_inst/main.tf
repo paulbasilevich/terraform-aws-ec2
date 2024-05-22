@@ -3,7 +3,6 @@ module "security" {
   cidr_scope  = var.cidr_scope
   extra_cidr  = var.extra_cidr
   aws_profile = var.aws_profile
-  aws_region  = var.aws_region
 }
 
 module "ami_data" {
@@ -16,7 +15,6 @@ module "key_pair" {
   source       = "../../modules/key_pair"
   ssh_key_name = var.ssh_key_name
   aws_profile  = var.aws_profile
-  aws_region   = var.aws_region
 }
 
 resource "aws_instance" "plaid" {

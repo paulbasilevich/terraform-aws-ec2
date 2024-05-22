@@ -27,14 +27,6 @@ output "ssh_key_name" {
   value = module.key_pair.ssh_key_name
 }
 
-output "aws_region" {
-  value = module.security.aws_region
-}
-
-# output "aws_region_key_pair" {
-#   value = module.key_pair.aws_region
-# }
-
 output "aws_profile" {
   value = module.security.aws_profile
 }

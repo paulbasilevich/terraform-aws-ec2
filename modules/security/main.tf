@@ -3,7 +3,6 @@ module "cidr_blk" {
   cidr_scope  = var.cidr_scope
   extra_cidr  = var.extra_cidr
   aws_profile = var.aws_profile
-  aws_region  = var.aws_region
 }
 
 resource "aws_security_group" "tf_sg" {

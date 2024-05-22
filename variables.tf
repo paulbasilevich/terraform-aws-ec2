@@ -29,12 +29,6 @@ variable "aws_profile" {
   default     = "default"
 }
 
-variable "aws_region" {
-  type        = string
-  description = "Declare the AWS region for this deployment"
-  default     = "us-west-2"
-}
-
 variable "ec2_instance_type" {
   type        = string
   description = "Type of the target EC2 instance"

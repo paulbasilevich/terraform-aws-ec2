@@ -17,19 +17,11 @@ output "ec2_instance_type" {
   value = module.ec2_inst.ec2_instance_type
 }
 
-output "aws_region" {
-  value = module.ec2_inst.aws_region
-}
-
 output "aws_profile" {
   value = module.ec2_inst.aws_profile
 }
-
 
 # output "public_ip" {
 #   value = module.ec2_inst.public_ip
 # }
 
-# output "region" {
-#   value = module.ec2_inst.aws_region
-# }

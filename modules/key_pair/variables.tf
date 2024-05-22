@@ -9,12 +9,3 @@ variable "aws_profile" {
   description = "Declare the AWS profile to use for this deployment"
   default     = "default"
 }
-
-variable "aws_region" {
-  type        = string
-  description = "Declare the AWS region for this deployment"
-  default     = "us-west-2"
-}
-
-
-

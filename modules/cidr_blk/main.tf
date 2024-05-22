@@ -1,7 +1,6 @@
 module "provider" {
   source  = "../../modules/provider"
   profile = var.aws_profile
-  region  = var.aws_region
 }
 
 data "external" "check_env" {
