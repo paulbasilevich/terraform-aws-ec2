@@ -40,4 +40,3 @@ output "ami_name" {
   description = "Name of the AMI retrieved for the current region by AMI name pattern"
   value       = module.ami_data.ami_name
 }
-

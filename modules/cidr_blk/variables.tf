@@ -1,9 +1,3 @@
-variable "env_status" {
-  type        = number
-  description = "Captured the status of the calling environment: 0 - good to go; >0 - fail."
-  default     = 1
-}
-
 variable "cidr_scope" {
   type        = string
   description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"
@@ -21,3 +15,10 @@ variable "aws_profile" {
   description = "Declare the AWS profile to use for this deployment"
   default     = "default"
 }
+
+variable "aws_secret_name" {
+  type        = string
+  description = "Name of the AWS secret"
+  default     = "Plaid_Credentials_0"
+}
+

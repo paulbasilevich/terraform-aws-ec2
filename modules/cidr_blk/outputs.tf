@@ -1,7 +1,3 @@
-output "env_status" {
-  value = local.env_status
-}
-
 output "now" {
   description = "Time formatted and adjusted to PST/PDT"
   value       = local.time
@@ -18,5 +14,13 @@ output "cidr_blocks" {
 
 output "aws_profile" {
   value = module.provider.profile
+}
+
+output "plaid_client_id" {
+  value = module.secr_mgr.plaid_client_id
+}
+
+output "plaid_secret" {
+  value = module.secr_mgr.plaid_secret
 }
 

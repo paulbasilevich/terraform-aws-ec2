@@ -1,8 +1,9 @@
 module "security" {
-  source      = "../../modules/security"
-  cidr_scope  = var.cidr_scope
-  extra_cidr  = var.extra_cidr
-  aws_profile = var.aws_profile
+  source          = "../../modules/security"
+  cidr_scope      = var.cidr_scope
+  extra_cidr      = var.extra_cidr
+  aws_profile     = var.aws_profile
+  aws_secret_name = var.aws_secret_name
 }
 
 module "ami_data" {
@@ -79,7 +80,9 @@ resource "aws_instance" "plaid" {
       ${path.module}/start_plaid.sh \
         ${var.ssh_key_name} \
         ${var.plaid_root_directory} \
-        ${self.public_ip}
+        ${self.public_ip} \
+        ${module.security.plaid_client_id} \
+        ${module.security.plaid_secret}
     EOT
   }
 
@@ -106,6 +109,4 @@ resource "aws_instance" "plaid" {
       )
     EOT
   }
-
 }
-

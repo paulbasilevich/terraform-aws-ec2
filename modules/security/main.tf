@@ -1,8 +1,9 @@
 module "cidr_blk" {
-  source      = "../../modules/cidr_blk"
-  cidr_scope  = var.cidr_scope
-  extra_cidr  = var.extra_cidr
-  aws_profile = var.aws_profile
+  source          = "../../modules/cidr_blk"
+  cidr_scope      = var.cidr_scope
+  extra_cidr      = var.extra_cidr
+  aws_profile     = var.aws_profile
+  aws_secret_name = var.aws_secret_name
 }
 
 resource "aws_security_group" "tf_sg" {

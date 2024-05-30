@@ -34,3 +34,9 @@ variable "ec2_instance_type" {
   description = "Type of the target EC2 instance"
   default     = "t2.micro"
 }
+
+variable "aws_secret_name" {
+  type        = string
+  description = "Name of the AWS secret"
+  default     = "Plaid_Credentials_0"
+}

@@ -26,3 +26,10 @@ variable "aws_profile" {
   description = "Declare the AWS profile to use for this deployment"
   default     = "default"
 }
+
+variable "aws_secret_name" {
+  type        = string
+  description = "Name of the AWS secret"
+  default     = "Plaid_Credentials_0"
+}
+

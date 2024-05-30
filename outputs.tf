@@ -21,7 +21,3 @@ output "aws_profile" {
   value = module.ec2_inst.aws_profile
 }
 
-# output "public_ip" {
-#   value = module.ec2_inst.public_ip
-# }
-

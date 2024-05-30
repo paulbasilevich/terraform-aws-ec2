@@ -42,3 +42,8 @@ variable "ec2_instance_type" {
   default     = "t2.micro"
 }
 
+variable "aws_secret_name" {
+  type        = string
+  description = "Name of the AWS secret"
+  default     = "Plaid_Credentials_0"
+}

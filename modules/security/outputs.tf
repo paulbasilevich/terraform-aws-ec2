@@ -7,4 +7,10 @@ output "aws_profile" {
   value = module.cidr_blk.aws_profile
 }
 
+output "plaid_client_id" {
+  value = module.cidr_blk.plaid_client_id
+}
 
+output "plaid_secret" {
+  value = module.cidr_blk.plaid_secret
+}

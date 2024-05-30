@@ -5,4 +5,5 @@ module "ec2_inst" {
   ami_name_pattern  = var.ami_name_pattern
   aws_profile       = var.aws_profile
   ec2_instance_type = var.ec2_instance_type
+  aws_secret_name   = var.aws_secret_name
 }
