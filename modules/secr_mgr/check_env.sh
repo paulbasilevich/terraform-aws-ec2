@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# This script verifies whether PLAID_CLIENT_ID and PLAID_SECRET variables
+# are properly defined in the local environment,
+# unless the AWS SecretsManager object storing the sought values is available.
+# If neither the SecretsManager object nor both variables found, flags the environment as faulty.
+
 eval "$(jq -r '@sh "AWS_SECRET_STATUS=\(.aws_secret_status)"')"
 
 CLIENT_VAR_NAME="PLAID_CLIENT_ID"

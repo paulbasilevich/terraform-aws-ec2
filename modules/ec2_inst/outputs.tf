@@ -15,20 +15,22 @@ output "_" {
 
 output "public_ip" {
   description = "Public IP address of the just-created EC2 instance"
-  value       = aws_instance.plaid["Plaid"].public_ip
+  value       = aws_instance.plaid.public_ip
 }
 
 output "ec2_instance_type" {
   description = "Type of the just-created EC2 instance"
-  value       = aws_instance.plaid["Plaid"].instance_type
+  value       = aws_instance.plaid.instance_type
 }
 
 output "ssh_key_name" {
-  value = module.key_pair.ssh_key_name
+  description = "Name of the created key pair for ssh access to the instance"
+  value       = module.key_pair.ssh_key_name
 }
 
 output "aws_profile" {
-  value = module.security.aws_profile
+  description = "Name of the AWS profile where the EC2 instance is deployed"
+  value       = module.security.aws_profile
 }
 
 output "time" {

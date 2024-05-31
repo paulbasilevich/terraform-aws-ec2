@@ -14,5 +14,6 @@ output "source" {
 }
 
 output "aws_profile" {
-  value = module.provider.profile
+  description = "Name of the AWS profile the EC2 instance is being created in"
+  value       = module.provider.profile
 }

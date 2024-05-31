@@ -9,18 +9,22 @@ output "cbl" {
 }
 
 output "cidr_blocks" {
-  value = local.cidr_blocks
+  description = "White list of CIDR block supplied to the security group"
+  value       = local.cidr_blocks
 }
 
 output "aws_profile" {
-  value = module.provider.profile
+  description = "Declared AWS profile used for this deployment"
+  value       = module.provider.profile
 }
 
 output "plaid_client_id" {
-  value = module.secr_mgr.plaid_client_id
+  description = "Cascaded relay of the value to calling modules"
+  value       = module.secr_mgr.plaid_client_id
 }
 
 output "plaid_secret" {
-  value = module.secr_mgr.plaid_secret
+  description = "Cascaded relay of the value to calling modules"
+  value       = module.secr_mgr.plaid_secret
 }
 

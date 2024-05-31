@@ -7,10 +7,6 @@ locals {
 }
 
 locals {
-  raw_env_status = data.external.check_env.result
-}
-
-locals {
   plaid_client_id = local.aws_secret_status != 0 ? join(", ", split(" ", data.external.check_env.result["plaid_client_id"])) : jsondecode(data.aws_secretsmanager_secret_version.plaid[0].secret_string)[var.client_var_name]
 }
 

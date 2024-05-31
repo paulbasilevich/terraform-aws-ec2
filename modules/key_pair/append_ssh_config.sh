@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# This script updates the local ssh config file
+# with the specs pertaining to the just created EC2 instance
+# so that it could be connected to by simple "ssh <$key_name>" call.
+# The original config file gets restored at "terraform destroy" time.
+
 config_file=~/.ssh/config
 config_save=~/.ssh/config_backup_tf
 

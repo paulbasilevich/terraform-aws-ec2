@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# This script prepares the environment for and starts Plaid Quickstart service
+# both on the backend and frontend side
+
 # eval "$(jq -r '@sh "SSH_ALIAS=\(.ssh_alias) PLAID_HOME=\(.plaid_home) PUBLIC_IP=\(.public_ip) PLAID_CLIENT_ID=\(.plaid_client_id) PLAID_SECRET=\(.plaid_secret)"')"
 
 SSH_ALIAS="$1"

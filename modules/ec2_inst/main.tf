@@ -20,11 +20,11 @@ module "key_pair" {
 
 resource "aws_instance" "plaid" {
   ami = module.ami_data.ami
-  for_each = {
-    Plaid = module.ami_data.instance_type
-  }
+  #   for_each = {
+  #     Plaid = module.ami_data.instance_type
+  #   }
 
-  instance_type          = each.value
+  instance_type          = module.ami_data.instance_type
   key_name               = module.key_pair.ssh_key_name
   vpc_security_group_ids = [module.security.tf_sg]
 
@@ -33,7 +33,8 @@ resource "aws_instance" "plaid" {
   #   }
 
   tags = {
-    Name = each.key
+    #  Name = each.key
+    Name = var.ec2_instance_name
   }
 
   provisioner "remote-exec" {

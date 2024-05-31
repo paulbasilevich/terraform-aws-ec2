@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This script creates the key-pair object in AWS EC2
+# and returns the generated private key to the calling module.
+# Also saves the private key as a *.pem file in ~/.ssh directory
+
 eval "$(jq -r '@sh "KEY_NAME=\(.ssh_key_name) SSH_TAG=\(.ssh_config_tag)"')"
 # SSH_TAG is merely to demonstrate multiple input json key-pairs.
 # Here .ssh_key_name is the only attribute retrievable from "self" - a must for destroyer-provisioner.

@@ -1,6 +1,7 @@
 variable "ami_name_pattern" {
-  type    = string
-  default = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-"
+  type        = string
+  description = "Wildcard name pattern the target AMI ID is searched by"
+  default     = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-"
   # default = "RHEL-9.3.0_HVM-"
   # default = "RHEL-"
   # default = "amzn2-"
@@ -40,6 +41,12 @@ variable "ec2_instance_type" {
   type        = string
   description = "Type of the target EC2 instance"
   default     = "t2.micro"
+}
+
+variable "ec2_instance_name" {
+  type        = string
+  description = "Name tag on the EC2 instance"
+  default     = "Plaid"
 }
 
 variable "aws_secret_name" {

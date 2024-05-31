@@ -6,7 +6,7 @@ variable "cidr_scope" {
 
 variable "extra_cidr" {
   type        = string
-  description = "CIDR block to be added by hand"
+  description = "CIDR block to be added by hand - optional"
   default     = "37.19.211.0/24"
 }
 

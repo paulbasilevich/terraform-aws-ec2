@@ -21,6 +21,9 @@ data "external" "check_env" {
     postcondition {
       condition     = tonumber(join(", ", split(" ", self.result["env_status"]))) == 0
       error_message = <<-EOT
+      Insofar as "${var.aws_secret_name}" AWS SecretsManager object is currently unavailable,
+      the system looks for Plaid credentials in the local profile.
+
       Make sure that the following environment variables are defined in ~/.bash_profile file:
       export PLAID_CLIENT_ID=<Your client ID retrieved from https://dashboard.plaid.com/developers/keys>
              (format: "^[[:xdigit:]]{24}$")
