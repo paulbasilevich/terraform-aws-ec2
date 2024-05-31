@@ -15,7 +15,13 @@ arn="$( aws secretsmanager list-secrets --filters "Key=name,Values=$aws_secret_n
 
 if [[ -n "$arn" ]]
 then
-    aws secretsmanager delete-secret --secret-id "$arn" --force-delete-without-recovery
+    prompt="Delete the AWS <$aws_secret_name> secret object (y/n)? "
+    read -p "$prompt" -rsn1 response
+    response="$( echo "$response" | tr [:upper:] [:lower:] )"
+    if [[ "$response" == "y" ]]
+    then
+        aws secretsmanager delete-secret --secret-id "$arn" --force-delete-without-recovery
+    fi
 else
     echo "There is no <$aws_secret_name> secret in AWS SecretsManager."
 fi

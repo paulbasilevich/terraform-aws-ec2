@@ -6,6 +6,9 @@
 master="$( basename "${BASH_SOURCE[0]}" )"
 origin="$( dirname "${BASH_SOURCE[0]}" )"
 target="$( pwd )"
+to_update="main.tf"
+this_module="ec2"
+output="outputs.tf"
 
 players=(
     retain_aws_secret.sh
@@ -42,11 +45,15 @@ do
     echo "  $vname = var.$vname\\\\" >> "$sedf"
 done
 cat >> "$sedf" << FOOT
-" main.tf
+" "$to_update"
 FOOT
 chmod +x "$sedf"
 ./"$sedf"
 rm "$sedf"
+
+# Propagate the output from the original root module to this module:
+sed -E -i -e "s~(=[[:space:]]+module.)([^.]+)(.[[:print:]]+)~\1$this_module\3~" "$output"
+
 
 echo "Refer to README.md file for instructions and suggestions."
 

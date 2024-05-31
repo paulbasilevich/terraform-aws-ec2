@@ -1,6 +1,6 @@
 output "_" {
   description = "Shell command to connect to the target host"
-  value       = "Connect to the deployed instance: >>> ssh ${module.ec2_inst.ssh_key_name} <<<  "
+  value       = module.ec2_inst._
 }
 
 output "aws_profile" {
