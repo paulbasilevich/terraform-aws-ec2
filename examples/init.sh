@@ -11,7 +11,6 @@ players=(
     retain_aws_secret.sh
     destroy_aws_secret.sh
 )
-echo ${players[@]}
 
 # Get inside the module where the example files are stored
 pushd "$origin" > /dev/null
@@ -25,7 +24,7 @@ players=(
     variables.tf
     outputs.tf
 )
-echo ${players[@]}
+
 for x in ${players[@]}; do cp "$x" "$target"; done
 
 # Return to the root folder
@@ -36,13 +35,12 @@ sedf=".sed"
 cat > "$sedf" << HEAD
 #!/usr/bin/env bash
 sed -E -i -e "/}/i\\\\
+
 HEAD
 for vname in $( grep variable variables.tf | cut -d\" -f2 )
 do
     echo "  $vname = var.$vname\\\\" >> "$sedf"
 done
-# One line up:
-printf '\033[1A' >> "$sedf"
 cat >> "$sedf" << FOOT
 " main.tf
 FOOT
