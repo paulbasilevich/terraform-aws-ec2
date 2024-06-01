@@ -6,6 +6,7 @@
 # Check if there is secr_mrg module is managed by terraform
 module="secr_mgr"
 pattern="module.${module}.aws_secretsmanager_secret"
+fullspec="module.ec2.module.ec2_inst.module.security.module.cidr_blk.module.$module"
 
 terraform state list | grep -q "$pattern"
 if [[ $? -eq 0 ]]
@@ -16,7 +17,7 @@ then
 
     if [[ "$response" == "y" ]]
     then
-        terraform state rm "$module"
+        terraform state rm "$fullspec"
         echo
         echo "To destroy the rest of the deployed resourses run: terraform destroy -auto-approve"
     fi

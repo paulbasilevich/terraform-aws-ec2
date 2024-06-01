@@ -53,6 +53,7 @@ rm "$sedf"
 # Propagate the output from the original root module to this module:
 sed -E -i -e "s~(=[[:space:]]+module.)([^.]+)(.[[:print:]]+)~\1$this_module\3~" "$output"
 
+terraform fmt
 
 echo "Refer to README.md file for instructions and suggestions."
 

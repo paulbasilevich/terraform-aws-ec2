@@ -42,3 +42,10 @@ output "ami_name" {
   description = "Name of the AMI retrieved for the current region by AMI name pattern"
   value       = module.ami_data.ami_name
 }
+
+output "cidr_block" {
+  description = "CIDR block evaluated as either <my_host> or <my_cidr> option"
+  value       = module.security.cidr_block
+}
+
+

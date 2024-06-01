@@ -4,3 +4,12 @@ ami_name_pattern = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd6
 # ami_name_pattern = "RHEL-9.3.0_HVM-"
 # ami_name_pattern = "amzn2-"
 aws_secret_name = "Plaid_Credentials_0"
+
+
+# cidr_scope        = "my_host"
+# extra_cidr        = "none"
+# ami_name_pattern  = "RHEL-9.3.0_HVM-"
+# aws_profile       = "Home"
+# ec2_instance_type = "t2.small"
+# aws_secret_name   = "SmirkHealth"
+# ssh_key_name      = "smirkhealth"
