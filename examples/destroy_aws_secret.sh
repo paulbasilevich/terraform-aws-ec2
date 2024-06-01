@@ -7,7 +7,7 @@
 # The default name of the secret it attempted to be found in terraform.tfvars file
 #
 
-default="$( grep aws_secret_name terraform.tfvars | cut -d\" -f2 )"
+default="$( egrep -e "^[[:space:]]*aws_secret_name[[:space:]]*=" terraform.tfvars | cut -d\" -f2 | tail -1 )"
 default="${default:-Plaid_Credentials_0}"
 aws_secret_name="${1:-$default}"
 
@@ -21,6 +21,8 @@ then
     if [[ "$response" == "y" ]]
     then
         aws secretsmanager delete-secret --secret-id "$arn" --force-delete-without-recovery
+    else
+        echo
     fi
 else
     echo "There is no <$aws_secret_name> secret in AWS SecretsManager."

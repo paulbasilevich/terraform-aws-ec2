@@ -38,7 +38,6 @@ sedf=".sed"
 cat > "$sedf" << HEAD
 #!/usr/bin/env bash
 sed -E -i -e "/}/i\\\\
-\\\\
 HEAD
 for vname in $( grep variable variables.tf | cut -d\" -f2 )
 do

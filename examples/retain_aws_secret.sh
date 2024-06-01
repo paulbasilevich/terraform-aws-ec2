@@ -4,9 +4,10 @@
 # thus persisting the object in AWS for further reuse.
 
 # Check if there is secr_mrg module is managed by terraform
-module="module.ec2.module.ec2_inst.module.security.module.cidr_blk.module.secr_mgr"
+module="secr_mgr"
+pattern="module.${module}.aws_secretsmanager_secret"
 
-terraform state list | grep -q "$module"
+terraform state list | grep -q "$pattern"
 if [[ $? -eq 0 ]]
 then
     prompt="Release the AWS SecretsManager object from terraform (y/n)? "
@@ -20,6 +21,6 @@ then
         echo "To destroy the rest of the deployed resourses run: terraform destroy -auto-approve"
     fi
 else
-    echo "Module <${module##*.}> is not managed by terraform."
+    echo "Module <${module}> is not managed by terraform."
 fi
 
