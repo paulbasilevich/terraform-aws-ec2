@@ -25,7 +25,7 @@ output "public_ip" {
 
 output "ec2_instance_type" {
   description = "Type of the just-created EC2 instance"
-  value       = module.ec2_inst.instance_type
+  value       = module.ec2_inst.ec2_instance_type
 }
 
 output "ssh_key_name" {
