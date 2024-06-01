@@ -50,7 +50,7 @@ resource "aws_instance" "plaid" {
       "sudo yum install -y tmux",
       "sudo yum install -y git",
       "git --version",
-      "git clone https://github.com/plaid/quickstart.git ${var.plaid_root_directory}",
+      "git clone https://github.com/plaid/quickstart.git ${local.plaid_root_directory}",
       ] : [
       "sudo apt-get update",
       "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -",
@@ -60,7 +60,7 @@ resource "aws_instance" "plaid" {
       "echo Npm",
       "npm --version",
       "sleep 10",
-      "git clone https://github.com/plaid/quickstart.git ${var.plaid_root_directory}",
+      "git clone https://github.com/plaid/quickstart.git ${local.plaid_root_directory}",
     ]
 
     connection {
