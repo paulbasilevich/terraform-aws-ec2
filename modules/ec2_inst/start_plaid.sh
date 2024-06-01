@@ -6,12 +6,13 @@
 # eval "$(jq -r '@sh "SSH_ALIAS=\(.ssh_alias) PLAID_HOME=\(.plaid_home) PUBLIC_IP=\(.public_ip) PLAID_CLIENT_ID=\(.plaid_client_id) PLAID_SECRET=\(.plaid_secret)"')"
 
 SSH_ALIAS="$1"
-PLAID_HOME="$2"
-PUBLIC_IP="$3"
-PLAID_CLIENT_ID="$4"
-PLAID_SECRET="$5"
+PUBLIC_IP="$2"
+PLAID_CLIENT_ID="$3"
+PLAID_SECRET="$4"
 PLAID_ENV="sandbox"
 PLAID_PRODUCTS="auth,transactions,identity"
+# For access to the home directory name at destroy time:
+PLAID_HOME="$SSH_ALIAS"
 
 backend_home="$PLAID_HOME/frontend/src"
 

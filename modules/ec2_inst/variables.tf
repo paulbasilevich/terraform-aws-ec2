@@ -25,12 +25,6 @@ variable "extra_cidr" {
   default     = "10.0.0.0/16"
 }
 
-variable "plaid_root_directory" {
-  type        = string
-  description = "Local destination of <git clone https://github.com/plaid/quickstart.git>"
-  default     = "plaid"
-}
-
 variable "aws_profile" {
   type        = string
   description = "Declare the AWS profile to use for this deployment"

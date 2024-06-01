@@ -81,7 +81,6 @@ resource "aws_instance" "plaid" {
         ${module.ami_data.user}
       ${path.module}/start_plaid.sh \
         ${var.ssh_key_name} \
-        ${var.plaid_root_directory} \
         ${self.public_ip} \
         ${module.security.plaid_client_id} \
         ${module.security.plaid_secret}
