@@ -22,3 +22,9 @@ output "plaid_secret" {
   description = "Cascaded relay of the value to the calling module"
   value       = module.cidr_blk.plaid_secret
 }
+
+output "aws_secret_name" {
+  description = "Name of the AWS secret"
+  value       = module.cidr_blk.aws_secret_name
+}
+

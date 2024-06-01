@@ -10,4 +10,7 @@ output "plaid_secret" {
   sensitive   = true
 }
 
-
+output "aws_secret_name" {
+  description = "Name of the AWS secret"
+  value       = var.aws_secret_name
+}

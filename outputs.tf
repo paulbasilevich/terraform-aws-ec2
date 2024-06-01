@@ -33,3 +33,8 @@ output "ssh_key_name" {
   value       = module.ec2_inst.ssh_key_name
 }
 
+output "aws_secret_name" {
+  description = "Name of the AWS secret"
+  value       = module.ec2_inst.aws_secret_name
+}
+

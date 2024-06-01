@@ -12,8 +12,8 @@ terraform state list | grep -q "$pattern"
 if [[ $? -eq 0 ]]
 then
     prompt="Release the AWS SecretsManager object from terraform (y/n)? "
-    read -p "$prompt" -rsn1 response
-    response="$( echo "$response" | tr [:upper:] [:lower:] )"
+    read -p "$prompt" response
+    response="$( echo "${response:0:1}" | tr [:upper:] [:lower:] )"
 
     if [[ "$response" == "y" ]]
     then

@@ -73,6 +73,7 @@ resource "aws_instance" "plaid" {
   }
 
   provisioner "local-exec" {
+    quiet   = true
     command = <<-EOT
       ${module.key_pair.source}/append_ssh_config.sh \
         ${module.key_pair.ssh_key_name} \
@@ -88,8 +89,10 @@ resource "aws_instance" "plaid" {
   }
 
   provisioner "local-exec" {
-    when    = destroy
-    command = <<-EOT
+    when       = destroy
+    quiet      = true
+    on_failure = continue
+    command    = <<-EOT
       aws ec2 delete-key-pair --key-name $(
         aws ec2 describe-instances --instance-ids ${self.id} \
           | jq -r '.Reservations[]|.Instances[]|.KeyName'

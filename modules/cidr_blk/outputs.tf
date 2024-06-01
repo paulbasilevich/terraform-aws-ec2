@@ -28,3 +28,8 @@ output "plaid_secret" {
   value       = module.secr_mgr.plaid_secret
 }
 
+output "aws_secret_name" {
+  description = "Name of the AWS secret"
+  value       = module.secr_mgr.aws_secret_name
+}
+
