@@ -19,7 +19,7 @@ Terraform module:
 
 Upon completion of Provision instructions,
 run the following command to initialize the root directory:
-    ./.terraform/modules/ec2/examples/init.sh
+    ./.terraform/modules/ec2/scripts/init.sh
 
 After that, running "terraform apply" will deploy Plaid Quickstart service automatically.
 

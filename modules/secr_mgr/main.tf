@@ -4,7 +4,7 @@ module "provider" {
 }
 
 data "external" "locate_aws_secret" {
-  program = ["bash", "${path.module}/find_aws_secret.sh"]
+  program = ["bash", "${var.scripts}/find_aws_secret.sh"]
   query = {
     aws_secret_name = var.aws_secret_name
   }
@@ -12,7 +12,7 @@ data "external" "locate_aws_secret" {
 
 data "external" "check_env" {
   depends_on = [data.external.locate_aws_secret]
-  program    = ["bash", "${path.module}/check_env.sh"]
+  program    = ["bash", "${var.scripts}/check_env.sh"]
   query = {
     aws_secret_status = local.aws_secret_status
   }

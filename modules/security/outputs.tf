@@ -28,3 +28,7 @@ output "aws_secret_name" {
   value       = module.cidr_blk.aws_secret_name
 }
 
+output "scripts" {
+  description = "Centralized location of the shell scripts"
+  value       = module.cidr_blk.scripts
+}

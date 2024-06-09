@@ -53,3 +53,8 @@ output "aws_secret_name" {
   value       = module.security.aws_secret_name
 }
 
+output "scripts" {
+  description = "Centralized location of the shell scripts"
+  value       = var.scripts
+}
+

@@ -48,3 +48,10 @@ variable "aws_secret_name" {
   description = "Name of the AWS secret"
   default     = "Plaid_Credentials_0"
 }
+
+variable "scripts" {
+  type        = string
+  description = "Centralized location of the shell scripts"
+  default     = "./.terraform/modules/ec2/scripts"
+}
+

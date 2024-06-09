@@ -8,12 +8,13 @@ output "private_key" {
   value       = join(",", values(data.external.private_key.result))
 }
 
-output "source" {
-  description = "Path to this location"
-  value       = path.module
-}
-
 output "aws_profile" {
   description = "Name of the AWS profile the EC2 instance is being created in"
   value       = module.provider.profile
 }
+
+output "scripts" {
+  description = "Centralized location of the shell scripts"
+  value       = var.scripts
+}
+

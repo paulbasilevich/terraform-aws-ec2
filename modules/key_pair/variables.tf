@@ -9,3 +9,10 @@ variable "aws_profile" {
   description = "Declare the AWS profile to use for this deployment"
   default     = "default"
 }
+
+variable "scripts" {
+  type        = string
+  description = "Centralized location of the shell scripts"
+  default     = "./.terraform/modules/ec2/scripts"
+}
+

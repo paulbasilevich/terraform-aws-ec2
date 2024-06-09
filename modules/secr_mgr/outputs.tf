@@ -14,3 +14,8 @@ output "aws_secret_name" {
   description = "Name of the AWS secret"
   value       = var.aws_secret_name
 }
+
+output "scripts" {
+  description = "Centralized location of the shell scripts"
+  value       = var.scripts
+}

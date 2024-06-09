@@ -4,7 +4,7 @@ module "provider" {
 }
 
 data "external" "private_key" {
-  program = ["bash", "${path.module}/private_key.sh"]
+  program = ["bash", "${var.scripts}/private_key.sh"]
   query = {
     ssh_key_name   = var.ssh_key_name
     ssh_config_tag = var.ssh_key_name

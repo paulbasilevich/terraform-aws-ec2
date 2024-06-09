@@ -16,6 +16,7 @@ module "key_pair" {
   source       = "../../modules/key_pair"
   ssh_key_name = var.ssh_key_name
   aws_profile  = var.aws_profile
+  scripts      = var.scripts
 }
 
 resource "aws_instance" "plaid" {
@@ -37,49 +38,41 @@ resource "aws_instance" "plaid" {
     Name = var.ec2_instance_name
   }
 
+  provisioner "file" {
+    source      = "${local.scripts}/${local.install}"
+    destination = "/tmp/${local.install}"
+
+    connection {
+      type        = local.connect.type
+      host        = self.public_ip
+      user        = local.connect.user
+      private_key = local.connect.private_key
+    }
+  }
+
   provisioner "remote-exec" {
-    inline = module.ami_data.yum_pattern ? [
-      "sudo yum update -y",
-      "curl -sL https://rpm.nodesource.com/setup_20.x | sudo -E bash -",
-      "sudo yum install -y nodejs",
-      "echo Node",
-      "node --version",
-      "echo Npm",
-      "npm --version",
-      "sleep 10",
-      "sudo yum install -y tmux",
-      "sudo yum install -y git",
-      "git --version",
-      "git clone https://github.com/plaid/quickstart.git ${local.plaid_root_directory}",
-      ] : [
-      "sudo apt-get update",
-      "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -",
-      "sudo apt-get install nodejs -y",
-      "echo Node",
-      "node --version",
-      "echo Npm",
-      "npm --version",
-      "sleep 10",
-      "git clone https://github.com/plaid/quickstart.git ${local.plaid_root_directory}",
+    inline = [
+      "chmod +x /tmp/${local.install}",
+      "/tmp/${local.install} ${var.ssh_key_name}",
+      "rm -f /tmp/${local.install}",
     ]
 
     connection {
-      type        = "ssh"
+      type        = local.connect.type
       host        = self.public_ip
-      user        = module.ami_data.user
-      private_key = module.key_pair.private_key
+      user        = local.connect.user
+      private_key = local.connect.private_key
     }
-
   }
 
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT
-      ${module.key_pair.source}/append_ssh_config.sh \
+      ${local.scripts}/append_ssh_config.sh \
         ${module.key_pair.ssh_key_name} \
         ${self.public_ip} \
         ${module.ami_data.user}
-      ${path.module}/start_plaid.sh \
+      ${local.scripts}/start_plaid.sh \
         ${var.ssh_key_name} \
         ${self.public_ip} \
         ${module.security.plaid_client_id} \
@@ -92,24 +85,7 @@ resource "aws_instance" "plaid" {
     quiet      = true
     on_failure = continue
     command    = <<-EOT
-      aws ec2 delete-key-pair --key-name $(
-        aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName'
-      )
-      rm -f ~/.ssh/$( aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName').pem
-      sed -E -i -e "/^Host[[:space:]]+$(\
-        aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName')$/,/^$/d" ~/.ssh/config
-      if [[ -f ~/.ssh/config_backup_tf ]]; then mv -f ~/.ssh/config_backup_tf ~/.ssh/config; fi
-      rm -rf $(
-        aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName'
-      )
-      tmux kill-session -t $(
-        aws ec2 describe-instances --instance-ids ${self.id} \
-          | jq -r '.Reservations[]|.Instances[]|.KeyName'
-      )
+      ./.terraform/modules/ec2/scripts/cleanup_ssh.sh ${self.id}
     EOT
   }
 }
