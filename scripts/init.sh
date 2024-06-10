@@ -37,7 +37,7 @@ popd > /dev/null
 sedf=".sed"
 cat > "$sedf" << HEAD
 #!/usr/bin/env bash
-sed -E -i -e "/}/i\\\\
+sed -E -i '' -e "/}/i\\\\
 HEAD
 for vname in $( grep variable variables.tf | cut -d\" -f2 )
 do
@@ -51,7 +51,7 @@ chmod +x "$sedf"
 rm "$sedf"
 
 # Propagate the output from the original root module to this module:
-sed -E -i -e "s~(=[[:space:]]+module.)([^.]+)(.[[:print:]]+)~\1$this_module\3~" "$output"
+sed -E -i '' -e "s~(=[[:space:]]+module.)([^.]+)(.[[:print:]]+)~\1$this_module\3~" "$output"
 
 terraform fmt > /dev/null
 
