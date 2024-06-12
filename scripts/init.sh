@@ -43,6 +43,8 @@ for vname in $( grep variable variables.tf | cut -d\" -f2 )
 do
     echo "  $vname = var.$vname\\\\" >> "$sedf"
 done
+# vvv Make sure that the target sed script will not add extra blank line at file end:
+sed -i '' '$s/\\$//' "$sedf"
 cat >> "$sedf" << FOOT
 " "$to_update"
 FOOT

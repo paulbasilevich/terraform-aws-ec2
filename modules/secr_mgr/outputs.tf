@@ -15,7 +15,12 @@ output "aws_secret_name" {
   value       = var.aws_secret_name
 }
 
-output "scripts" {
+output "scripts_home" {
   description = "Centralized location of the shell scripts"
-  value       = var.scripts
+  value       = var.scripts_home
+}
+
+output "env_status" {
+  description = "Indicates whether the credentials are available"
+  value       = local.env_status
 }

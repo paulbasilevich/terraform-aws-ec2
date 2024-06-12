@@ -8,7 +8,7 @@
 #
 
 default="$( egrep -e "^[[:space:]]*aws_secret_name[[:space:]]*=" terraform.tfvars | cut -d\" -f2 | tail -1 )"
-default="${default:-Plaid_Credentials_0}"
+default="${default:-Plaid_Credentials}"
 aws_secret_name="${1:-$default}"
 
 arn="$( aws secretsmanager list-secrets --filters "Key=name,Values=$aws_secret_name" | jq -r '.SecretList[]|.ARN' )"

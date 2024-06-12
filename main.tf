@@ -7,4 +7,5 @@ module "ec2_inst" {
   ec2_instance_type = var.ec2_instance_type
   aws_secret_name   = var.aws_secret_name
   ssh_key_name      = var.ssh_key_name
+  scripts_home      = var.scripts_home
 }

@@ -13,22 +13,7 @@ output "aws_profile" {
   value       = module.cidr_blk.aws_profile
 }
 
-output "plaid_client_id" {
-  description = "Cascaded relay of the value to the calling module"
-  value       = module.cidr_blk.plaid_client_id
-}
-
-output "plaid_secret" {
-  description = "Cascaded relay of the value to the calling module"
-  value       = module.cidr_blk.plaid_secret
-}
-
-output "aws_secret_name" {
-  description = "Name of the AWS secret"
-  value       = module.cidr_blk.aws_secret_name
-}
-
-output "scripts" {
+output "scripts_home" {
   description = "Centralized location of the shell scripts"
-  value       = module.cidr_blk.scripts
+  value       = var.scripts_home
 }

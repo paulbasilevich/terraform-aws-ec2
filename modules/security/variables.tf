@@ -30,12 +30,12 @@ variable "aws_profile" {
 variable "aws_secret_name" {
   type        = string
   description = "Name of the AWS secret"
-  default     = "Plaid_Credentials_0"
+  default     = "Plaid_Credentials"
 }
 
-variable "scripts" {
+variable "scripts_home" {
   type        = string
   description = "Centralized location of the shell scripts"
-  default     = "./.terraform/modules/ec2/scripts"
+  default     = "../../scripts"
 }
 

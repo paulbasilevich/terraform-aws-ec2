@@ -4,7 +4,7 @@ module "cidr_blk" {
   extra_cidr      = var.extra_cidr
   aws_profile     = var.aws_profile
   aws_secret_name = var.aws_secret_name
-  scripts         = var.scripts
+  scripts_home    = var.scripts_home
 }
 
 resource "aws_security_group" "tf_sg" {

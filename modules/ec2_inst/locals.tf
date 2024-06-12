@@ -18,7 +18,3 @@ locals {
     private_key = module.key_pair.private_key
   }
 }
-
-locals {
-  scripts = module.key_pair.scripts
-}

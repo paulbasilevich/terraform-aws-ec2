@@ -4,6 +4,7 @@ module "security" {
   extra_cidr      = var.extra_cidr
   aws_profile     = var.aws_profile
   aws_secret_name = var.aws_secret_name
+  scripts_home    = var.scripts_home
 }
 
 module "ami_data" {
@@ -13,10 +14,11 @@ module "ami_data" {
 }
 
 module "key_pair" {
-  source       = "../../modules/key_pair"
-  ssh_key_name = var.ssh_key_name
-  aws_profile  = var.aws_profile
-  scripts      = var.scripts
+  source          = "../../modules/key_pair"
+  ssh_key_name    = var.ssh_key_name
+  aws_profile     = var.aws_profile
+  aws_secret_name = var.aws_secret_name
+  scripts_home    = var.scripts_home
 }
 
 resource "aws_instance" "plaid" {
@@ -39,7 +41,7 @@ resource "aws_instance" "plaid" {
   }
 
   provisioner "file" {
-    source      = "${local.scripts}/${local.install}"
+    source      = "${var.scripts_home}/${local.install}"
     destination = "/tmp/${local.install}"
 
     connection {
@@ -68,15 +70,15 @@ resource "aws_instance" "plaid" {
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT
-      ${local.scripts}/append_ssh_config.sh \
+      ${var.scripts_home}/append_ssh_config.sh \
         ${module.key_pair.ssh_key_name} \
         ${self.public_ip} \
         ${module.ami_data.user}
-      ${local.scripts}/start_plaid.sh \
+      ${var.scripts_home}/start_plaid.sh \
         ${var.ssh_key_name} \
         ${self.public_ip} \
-        ${module.security.plaid_client_id} \
-        ${module.security.plaid_secret}
+        ${module.key_pair.plaid_client_id} \
+        ${module.key_pair.plaid_secret}
     EOT
   }
 

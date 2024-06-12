@@ -6,7 +6,7 @@
 # Check if there is secr_mrg module is managed by terraform
 module="secr_mgr"
 pattern="module.${module}.aws_secretsmanager_secret"
-fullspec="module.ec2.module.ec2_inst.module.security.module.cidr_blk.module.$module"
+fullspec="module.ec2.module.ec2_inst.module.key_pair.module.$module"
 
 terraform state list | grep -q "$pattern"
 if [[ $? -eq 0 ]]
