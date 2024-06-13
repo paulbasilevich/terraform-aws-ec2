@@ -50,7 +50,7 @@ output "cidr_block" {
 
 output "aws_secret_name" {
   description = "Name of the AWS secret"
-  value       = module.security.aws_secret_name
+  value       = module.key_pair.aws_secret_name
 }
 
 output "scripts_home" {
