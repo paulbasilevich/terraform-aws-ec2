@@ -4,6 +4,12 @@ variable "cidr_scope" {
   default     = "my_host"
 }
 
+variable "vpc_cidr" {
+  description = "CIDR block allocated for the custom vpc"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
 variable "extra_cidr" {
   type        = string
   description = "CIDR block to be added by hand"

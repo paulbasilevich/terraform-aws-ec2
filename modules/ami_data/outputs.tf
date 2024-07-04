@@ -8,11 +8,6 @@ output "ami_name" {
   value       = data.aws_ami.ec2_ami.name
 }
 
-output "instance_type" {
-  description = "Free-tier instance type protected from external override"
-  value       = var.instance_type
-}
-
 output "user" {
   description = "EC2 login account for the AMI type in use"
   value       = local.yum_pattern ? "ec2-user" : "ubuntu"

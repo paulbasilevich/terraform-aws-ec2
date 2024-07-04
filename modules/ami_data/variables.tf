@@ -1,9 +1,3 @@
-variable "instance_type" {
-  type        = string
-  description = "Type of the target EC2 instance"
-  default     = "t2.micro"
-}
-
 variable "ami_name_pattern" {
   type        = string
   description = "Wildcard name pattern for quering the AMI ID"

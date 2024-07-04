@@ -11,7 +11,7 @@
 #   - <my_host>     this_IP/32
 #   - <my_cird>     the CIDR this host belongs in
 
-eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope) EXTRA_CIDR=\(.extra_cidr)"')"
+eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope) EXTRA_CIDR=\(.extra_cidr) VPC_CIDR=\(.vpc_cidr)"')"
 
 fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"
 
@@ -31,8 +31,11 @@ case "$CIDR_SCOPE" in
                ;;
 esac
 
-x="$( echo -e "$EXTRA_CIDR" | egrep -x -e "$fmt_cidr" )"
-if [[ -n "$x" ]]; then RANGE+=" $x"; fi
+for z in EXTRA_CIDR VPC_CIDR
+do
+    x="$( eval echo -e "\$$z" | egrep -x -e "$fmt_cidr" )"
+    if [[ -n "$x" ]]; then RANGE+=" $x"; fi
+done
 
 jq -n --arg cidr_range "$RANGE" '{"cidr_range":$cidr_range}'
 

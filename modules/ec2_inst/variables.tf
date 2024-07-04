@@ -22,7 +22,7 @@ variable "cidr_scope" {
 variable "extra_cidr" {
   type        = string
   description = "CIDR block to be added by hand"
-  default     = "10.0.0.0/16"
+  default     = "37.19.211.0/24"
 }
 
 variable "aws_profile" {
@@ -37,12 +37,6 @@ variable "ec2_instance_type" {
   default     = "t2.micro"
 }
 
-variable "ec2_instance_name" {
-  type        = string
-  description = "Name tag on the EC2 instance"
-  default     = "Plaid"
-}
-
 variable "aws_secret_name" {
   type        = string
   description = "Name of the AWS secret"
@@ -55,3 +49,28 @@ variable "scripts_home" {
   default     = "../../scripts"
 }
 
+variable "common_tags" {
+  description = "Tags to be applied to all resources"
+  type        = map(string)
+  default = {
+    Name = "Plaid"
+  }
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block allocated for the custom vpc"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "deployment_subnet" {
+  description = "Target subnet for provisioning EC2 instance: 'public' or 'private'"
+  type        = string
+  default     = "public"
+}
+
+variable "backend_port" {
+  description = "Port the remote backend server listens on"
+  type        = number
+  default     = 8000
+}

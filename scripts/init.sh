@@ -1,35 +1,50 @@
 #!/usr/bin/env bash
 
-# Copy the example files to the root folder by running:
-#       .terraform/modules/ec2/examples/init.sh
+# Copy the runtime-environment-specific files to the root folder by running:
+#       .terraform/modules/ec2/scripts/init.sh
 
-master="$( basename "${BASH_SOURCE[0]}" )"
-origin="$( dirname "${BASH_SOURCE[0]}" )"
 target="$( pwd )"
 to_update="main.tf"
-this_module="ec2"
-output="outputs.tf"
+this_module="$(
+    egrep -e "^[[:space:]]*module[[:space:]]+[\"][^\"]+[\"][[:space:]]*{" "$to_update" \
+    | head -1 | cut -d\" -f2
+    )"
 
+path_pad_to_this_module=".$(
+    egrep -e "^[[:space:]]*source[[:space:]]*=[[:space:]]*[\"][^\"]+[\"]" "$to_update" \
+    | head -1 | cut -d\" -f2
+    )"
+
+origin="$( dirname "${BASH_SOURCE[0]}" )"
+
+# Extra custom scripts developed so far and hosted in the same directory as this script:
 players=(
     retain_aws_secret.sh
     destroy_aws_secret.sh
 )
 
-# Get inside the module where the example files are stored
 pushd "$origin" > /dev/null
-for x in ${players[@]}; do cp "$x" "$target"; done
+for x in ${players[@]}
+do
+    if [[ -s "$x" ]]; then cp "$x" "$target"; fi
+done
 
 # Up to the parent directory for terraform config files:
-cd ..
+cd "$path_pad_to_this_module"
+
+from_output="$( pwd )/outputs.tf"
+
+# Bring the "original" top-level config files up to the root directory:
 players=(
     README.md
     terraform.tfvars
     variables.tf
-    outputs.tf
 )
 
-for x in ${players[@]}; do cp "$x" "$target"; done
-
+for x in ${players[@]}
+do
+    if [[ -s "$x" ]]; then cp "$x" "$target"; fi
+done
 # Return to the root folder
 popd > /dev/null
 
@@ -53,9 +68,33 @@ chmod +x "$sedf"
 rm "$sedf"
 
 # Propagate the output from the original root module to this module:
-sed -E -i '' -e "s~(=[[:space:]]+module.)([^.]+)(.[[:print:]]+)~\1$this_module\3~" "$output"
+output="outputs.tf"
+IFS=$'\}'
+for x in $(
+    sed -E -n "\~^output[[:space:]]+[[:graph:]]+[[:space:]]*{$~,\~^}$~p" "$from_output" \
+        | egrep -e "^}$|^[[:space:]]*(output[[:space:]]+[\"][^\"]+[\"][[:space:]]*{)|(description[[:space:]]+=)"
+    )
+do
+    IFS=$'\n'
+    for y in ${x[@]}
+    do
+        echo "$y" | egrep -q -e "^[[:space:]]*output[[:space:]]+[\"][^\"]+[\"][[:space:]]*{"
+        if [[ $? -eq 0 ]]
+        then
+            name="$( echo "$y" | cut -d\" -f2 )"
+        fi
+        echo $y
+    done
+    echo -e "  value = module.$this_module.$name\n}\n"
+    IFS=$'\}'
+done > "$output"
 
 terraform fmt > /dev/null
 
-echo "Refer to README.md file for instructions and suggestions."
+if [[ -s "README.md" ]]
+then
+    echo "Refer to README.md file for instructions and suggestions."
+else
+    echo "Initialization complete."
+fi
 

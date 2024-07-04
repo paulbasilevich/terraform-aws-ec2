@@ -4,7 +4,9 @@ ami_name_pattern = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd6
 # ami_name_pattern = "RHEL-9.3.0_HVM-"
 # ami_name_pattern = "amzn2-"
 aws_secret_name = "Plaid_Credentials"
+deployment_subnet = "private"
 
+# scripts_home    = "./scripts"
 
 # cidr_scope        = "my_host"
 # extra_cidr        = "none"

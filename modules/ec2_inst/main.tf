@@ -1,16 +1,19 @@
 module "security" {
-  source          = "../../modules/security"
-  cidr_scope      = var.cidr_scope
-  extra_cidr      = var.extra_cidr
-  aws_profile     = var.aws_profile
-  aws_secret_name = var.aws_secret_name
-  scripts_home    = var.scripts_home
+  source             = "../../modules/security"
+  cidr_scope         = var.cidr_scope
+  extra_cidr         = var.extra_cidr
+  vpc_cidr           = var.vpc_cidr
+  aws_profile        = var.aws_profile
+  aws_secret_name    = var.aws_secret_name
+  scripts_home       = var.scripts_home
+  ec2_instance_type  = var.ec2_instance_type
+  ec2_instance_count = local.ec2_instance_count
+  backend_port       = var.backend_port
 }
 
 module "ami_data" {
   source           = "../../modules/ami_data"
   ami_name_pattern = var.ami_name_pattern
-  instance_type    = var.ec2_instance_type
 }
 
 module "key_pair" {
@@ -22,61 +25,62 @@ module "key_pair" {
 }
 
 resource "aws_instance" "plaid" {
-  ami = module.ami_data.ami
-  #   for_each = {
-  #     Plaid = module.ami_data.instance_type
-  #   }
+  ami                         = module.ami_data.ami
+  count                       = local.ec2_instance_count
+  instance_type               = module.security.ec2_instance_type
+  key_name                    = module.key_pair.ssh_key_name
+  vpc_security_group_ids      = [module.security.security_group]
+  availability_zone           = module.security.availability_zone[count.index]
+  subnet_id                   = local.instance_config[count.index].snid
+  tags                        = var.common_tags
+  associate_public_ip_address = count.index == 0 ? true : false
 
-  instance_type          = module.ami_data.instance_type
-  key_name               = module.key_pair.ssh_key_name
-  vpc_security_group_ids = [module.security.tf_sg]
-
-  #   timeouts {
-  #     create = "5m"
-  #   }
-
-  tags = {
-    #  Name = each.key
-    Name = var.ec2_instance_name
-  }
-
-  provisioner "file" {
-    source      = "${var.scripts_home}/${local.install}"
-    destination = "/tmp/${local.install}"
-
-    connection {
-      type        = local.connect.type
-      host        = self.public_ip
-      user        = local.connect.user
-      private_key = local.connect.private_key
-    }
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/${local.install}",
-      "/tmp/${local.install} ${var.ssh_key_name}",
-      "rm -f /tmp/${local.install}",
-    ]
-
-    connection {
-      type        = local.connect.type
-      host        = self.public_ip
-      user        = local.connect.user
-      private_key = local.connect.private_key
-    }
-  }
+  depends_on = [aws_instance.plaid[0]]
 
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT
       ${var.scripts_home}/append_ssh_config.sh \
+        ${count.index} \
+        ${local.ec2_instance_count} \
         ${module.key_pair.ssh_key_name} \
-        ${self.public_ip} \
-        ${module.ami_data.user}
-      ${var.scripts_home}/start_plaid.sh \
+        ${module.ami_data.user} \
+        ${self.id} \
+        ${self.private_ip} \
+        ${self.public_ip}
+    EOT
+  }
+
+  provisioner "local-exec" {
+    quiet   = true
+    command = <<-EOT
+      ${var.scripts_home}/upload_provision.sh \
+        ${count.index} \
+        ${local.ec2_instance_count} \
+        ${module.key_pair.ssh_key_name} \
+        ${var.scripts_home}/${local.install} \
+        ${self.id}
+    EOT
+  }
+
+  provisioner "local-exec" {
+    quiet   = true
+    command = <<-EOT
+      ${var.scripts_home}/run_provision.sh \
+        ${count.index} \
+        ${local.ec2_instance_count} \
+        ${module.key_pair.ssh_key_name} \
+        ${var.scripts_home}/${local.install} \
+    EOT
+  }
+
+  provisioner "local-exec" {
+    quiet   = true
+    command = <<-EOT
+      ${var.scripts_home}/start_backend.sh \
+        ${count.index} \
+        ${local.ec2_instance_count} \
         ${var.ssh_key_name} \
-        ${self.public_ip} \
         ${module.key_pair.plaid_client_id} \
         ${module.key_pair.plaid_secret}
     EOT
@@ -86,8 +90,42 @@ resource "aws_instance" "plaid" {
     when       = destroy
     quiet      = true
     on_failure = continue
-    command    = <<-EOT
-      ./.terraform/modules/ec2/scripts/cleanup_ssh.sh ${self.id}
+    command    = startswith("${path.module}", ".terraform") ? "./.terraform/modules/ec2/scripts/cleanup_ssh.sh ${count.index} ${self.id}" : "./scripts/cleanup_ssh.sh ${count.index} ${self.id}"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "plaid" {
+  count            = local.ec2_instance_count - 1
+  target_group_arn = module.security.lb_target_group_arn
+  target_id        = aws_instance.plaid[1].id
+  port             = var.backend_port
+}
+
+resource "null_resource" "start_frontend_public" {
+  count      = local.ec2_instance_count == 1 ? 1 : 0
+  depends_on = [aws_instance.plaid[0]]
+  provisioner "local-exec" {
+    quiet   = true
+    command = <<-EOT
+      ${var.scripts_home}/start_frontend.sh \
+        ${var.ssh_key_name} \
+        ${aws_instance.plaid[0].public_dns} \
+        ${var.backend_port}
     EOT
   }
 }
+
+resource "null_resource" "start_frontend_private" {
+  count      = local.ec2_instance_count > 1 ? 1 : 0
+  depends_on = [aws_instance.plaid[1]]
+  provisioner "local-exec" {
+    quiet   = true
+    command = <<-EOT
+      ${var.scripts_home}/start_frontend.sh \
+        ${var.ssh_key_name} \
+        ${module.security.lb_dns_name} \
+        ${var.backend_port}
+    EOT
+  }
+}
+

@@ -24,3 +24,8 @@ output "env_status" {
   description = "Indicates whether the credentials are available"
   value       = local.env_status
 }
+
+output "aws_secret_status" {
+  description = "Indicates whether the credentials are available"
+  value       = local.aws_secret_status
+}
