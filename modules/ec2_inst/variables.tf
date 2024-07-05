@@ -46,7 +46,7 @@ variable "aws_secret_name" {
 variable "scripts_home" {
   type        = string
   description = "Centralized location of the shell scripts"
-  default     = "../../scripts"
+  default     = "./scripts"
 }
 
 variable "common_tags" {

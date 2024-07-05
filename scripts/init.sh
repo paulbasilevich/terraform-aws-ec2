@@ -10,11 +10,6 @@ this_module="$(
     | head -1 | cut -d\" -f2
     )"
 
-path_pad_to_this_module=".$(
-    egrep -e "^[[:space:]]*source[[:space:]]*=[[:space:]]*[\"][^\"]+[\"]" "$to_update" \
-    | head -1 | cut -d\" -f2
-    )"
-
 origin="$( dirname "${BASH_SOURCE[0]}" )"
 
 # Extra custom scripts developed so far and hosted in the same directory as this script:
@@ -30,15 +25,17 @@ do
 done
 
 # Up to the parent directory for terraform config files:
-cd "$path_pad_to_this_module"
+cd ..
 
 from_output="$( pwd )/outputs.tf"
+from_main="$( pwd )/main.tf"
 
 # Bring the "original" top-level config files up to the root directory:
 players=(
     README.md
     terraform.tfvars
     variables.tf
+    locals.tf
 )
 
 for x in ${players[@]}
@@ -54,12 +51,18 @@ cat > "$sedf" << HEAD
 #!/usr/bin/env bash
 sed -E -i '' -e "/}/i\\\\
 HEAD
-for vname in $( grep variable variables.tf | cut -d\" -f2 )
+for vname in $( grep variable variables.tf | grep -v "scripts_home" | cut -d\" -f2 )
 do
     echo "  $vname = var.$vname\\\\" >> "$sedf"
 done
 # vvv Make sure that the target sed script will not add extra blank line at file end:
-sed -i '' '$s/\\$//' "$sedf"
+# sed -i '' '$s/\\$//' "$sedf"
+IFS_SAVE=$IFS; IFS=$'\n'
+for line in $( cat "$from_main" | egrep -e "^[[:space:]]*[^=]+=[[:space:]]*local.[[:print:]]+$" )
+do
+    echo "$line" >> "$sedf"
+done
+IFS=$IFS_SAVE
 cat >> "$sedf" << FOOT
 " "$to_update"
 FOOT

@@ -7,7 +7,7 @@ module "ec2_inst" {
   aws_profile       = var.aws_profile
   ec2_instance_type = var.ec2_instance_type
   aws_secret_name   = var.aws_secret_name
-  scripts_home      = var.scripts_home
+  scripts_home      = local.scripts_home
   common_tags       = var.common_tags
   vpc_cidr          = var.vpc_cidr
   deployment_subnet = var.deployment_subnet
