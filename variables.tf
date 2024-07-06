@@ -22,7 +22,7 @@ variable "cidr_scope" {
 variable "extra_cidr" {
   type        = string
   description = "CIDR block to be added by hand"
-  default     = "37.19.211.0/24"
+  default     = null
 }
 
 variable "aws_profile" {
@@ -31,10 +31,19 @@ variable "aws_profile" {
   default     = "default"
 }
 
-variable "ec2_instance_type" {
-  type        = string
-  description = "Type of the target EC2 instance"
-  default     = "t2.micro"
+variable "subnet_config" {
+  description = "Subnet specs. Here reduced to the subnet role attributes, but can be expanded"
+  type        = list(map(string))
+  default = [
+    {
+      role = "public"
+      type = "t2.micro"
+    },
+    {
+      role = "private"
+      type = "t2.micro"
+    }
+  ]
 }
 
 variable "aws_secret_name" {

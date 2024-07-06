@@ -8,7 +8,7 @@ data "external" "my_cidr" {
   query = {
     cidr_scope = var.cidr_scope
     extra_cidr = var.extra_cidr
-    vpc_cidr   = cidrsubnet(var.vpc_cidr, 8, 1)
+    vpc_cidr   = var.ec2_instance_count > 1 ? cidrsubnet(var.vpc_cidr, 8, 1) : null
   }
 }
 

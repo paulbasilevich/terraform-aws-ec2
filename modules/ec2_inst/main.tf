@@ -6,7 +6,7 @@ module "security" {
   aws_profile        = var.aws_profile
   aws_secret_name    = var.aws_secret_name
   scripts_home       = var.scripts_home
-  ec2_instance_type  = var.ec2_instance_type
+  subnet_config = var.subnet_config
   ec2_instance_count = local.ec2_instance_count
   backend_port       = var.backend_port
 }
@@ -27,7 +27,7 @@ module "key_pair" {
 resource "aws_instance" "plaid" {
   ami                         = module.ami_data.ami
   count                       = local.ec2_instance_count
-  instance_type               = module.security.ec2_instance_type
+  instance_type               = module.security.subnet_config[count.index].type
   key_name                    = module.key_pair.ssh_key_name
   vpc_security_group_ids      = [module.security.security_group]
   availability_zone           = module.security.availability_zone[count.index]
@@ -117,7 +117,7 @@ resource "null_resource" "start_frontend_public" {
 
 resource "null_resource" "start_frontend_private" {
   count      = local.ec2_instance_count > 1 ? 1 : 0
-  depends_on = [aws_instance.plaid[1]]
+  depends_on = [aws_instance.plaid[1],aws_lb_target_group_attachment.plaid[0]]
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT

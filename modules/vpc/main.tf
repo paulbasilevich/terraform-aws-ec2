@@ -12,7 +12,7 @@ resource "aws_vpc" "plaid" {
 data "aws_ec2_instance_type_offerings" "av_zone" {
   filter {
     name   = "instance-type"
-    values = [var.ec2_instance_type]
+    values = [for x in var.subnet_config : x.type]
   }
   location_type = "availability-zone"
 }

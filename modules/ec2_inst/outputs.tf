@@ -15,17 +15,17 @@ output "_" {
 
 output "public_ip" {
   description = "Public IP address of the just-created EC2 instance"
-  value       = aws_instance.plaid[*].public_ip
+  value       = join(", ", aws_instance.plaid[*].public_ip)
 }
 
 output "private_ip" {
   description = "Private IP address of the just-created EC2 instance"
-  value       = aws_instance.plaid[*].private_ip
+  value       = join(", ", aws_instance.plaid[*].private_ip)
 }
 
 output "ec2_instance_type" {
   description = "Type of the just-created EC2 instance"
-  value       = aws_instance.plaid[*].instance_type
+  value       = join(", ", aws_instance.plaid[*].instance_type)
 }
 
 output "ssh_key_name" {

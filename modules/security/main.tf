@@ -1,18 +1,18 @@
 module "cidr_blk" {
-  source          = "../../modules/cidr_blk"
-  cidr_scope      = var.cidr_scope
-  vpc_cidr        = var.vpc_cidr
-  extra_cidr      = var.extra_cidr
-  aws_profile     = var.aws_profile
-  aws_secret_name = var.aws_secret_name
-  scripts_home    = var.scripts_home
+  source             = "../../modules/cidr_blk"
+  cidr_scope         = var.cidr_scope
+  vpc_cidr           = var.vpc_cidr
+  extra_cidr         = var.extra_cidr
+  aws_profile        = var.aws_profile
+  aws_secret_name    = var.aws_secret_name
+  scripts_home       = var.scripts_home
+  ec2_instance_count = var.ec2_instance_count
 }
 
 module "vpc" {
   source             = "../../modules/vpc"
   vpc_cidr           = var.vpc_cidr
   subnet_config      = var.subnet_config
-  ec2_instance_type  = var.ec2_instance_type
   common_tags        = var.common_tags
   ec2_instance_count = var.ec2_instance_count
 }

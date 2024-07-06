@@ -10,19 +10,13 @@ variable "subnet_config" {
   default = [
     {
       role = "public"
-      # cidr = "10.0.1.0/24"
+      type = "t2.micro"
     },
     {
       role = "private"
-      # cidr = "10.0.2.0/24"
+      type = "t2.micro"
     }
   ]
-}
-
-variable "ec2_instance_type" {
-  description = "Target ec2 instance type, e.g., t2.micro"
-  type        = string
-  default     = "t2.micro"
 }
 
 variable "ec2_instance_count" {

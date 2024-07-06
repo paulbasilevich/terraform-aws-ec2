@@ -13,7 +13,7 @@ variable "vpc_cidr" {
 variable "extra_cidr" {
   type        = string
   description = "CIDR block to be added by hand"
-  default     = ""
+  default     = null
 }
 
 variable "aws_profile" {
@@ -34,3 +34,8 @@ variable "scripts_home" {
   default     = "./scripts"
 }
 
+variable "ec2_instance_count" {
+  description = "If 1 - create only public subnet; 2 - add private subnet"
+  type        = number
+  default     = 1
+}

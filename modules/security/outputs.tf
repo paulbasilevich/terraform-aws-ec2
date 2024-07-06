@@ -43,6 +43,10 @@ output "private_subnet_cidr" {
   value       = module.vpc.private_subnet_cidr
 }
 
+output "subnet_config" {
+  description = "Subnet specs."
+  value       = var.subnet_config
+}
 output "ec2_instance_type" {
   description = "Instance type returned by the offering"
   value       = module.vpc.ec2_instance_type
