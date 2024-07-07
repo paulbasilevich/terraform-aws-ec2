@@ -5,7 +5,7 @@ module "ec2_inst" {
   cidr_scope        = var.cidr_scope
   extra_cidr        = var.extra_cidr
   aws_profile       = var.aws_profile
-  subnet_config = var.subnet_config
+  subnet_config     = var.subnet_config
   aws_secret_name   = var.aws_secret_name
   scripts_home      = local.scripts_home
   common_tags       = var.common_tags

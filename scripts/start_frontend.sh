@@ -35,7 +35,7 @@ EXP
 
 chmod +x "$test_connect"
 pause_seconds=10
-attempts=10
+attempts=60
 result=1
 while [[ $result -ne 0 && $attempts -gt 0 ]]
 do

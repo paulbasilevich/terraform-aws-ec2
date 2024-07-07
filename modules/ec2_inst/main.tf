@@ -6,7 +6,7 @@ module "security" {
   aws_profile        = var.aws_profile
   aws_secret_name    = var.aws_secret_name
   scripts_home       = var.scripts_home
-  subnet_config = var.subnet_config
+  subnet_config      = var.subnet_config
   ec2_instance_count = local.ec2_instance_count
   backend_port       = var.backend_port
 }
@@ -117,7 +117,7 @@ resource "null_resource" "start_frontend_public" {
 
 resource "null_resource" "start_frontend_private" {
   count      = local.ec2_instance_count > 1 ? 1 : 0
-  depends_on = [aws_instance.plaid[1],aws_lb_target_group_attachment.plaid[0]]
+  depends_on = [aws_instance.plaid[1], aws_lb_target_group_attachment.plaid[0]]
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT
