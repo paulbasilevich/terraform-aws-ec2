@@ -1,9 +1,25 @@
 #!/usr/bin/env bash
 
 # This script updates the local ssh config file
-# with the specs pertaining to the just created EC2 instance
-# so that it could be connected to by simple "ssh <$key_name>" call.
+# with the specs pertaining to the EC2 instance
+# just created in the public subnet of the custom VPC
+# so that the instance could be connected to by simple
+# "ssh <$key_name>" call pattern.
+
+# If the target instance running Plaid service is deployed
+# in the private subnet, construes the instance running in the public subnet
+# as a bastion for the target and adjusts the code block in ~/.ssh/config file accordingly.
+
 # The original config file gets restored at "terraform destroy" time.
+
+# Input arguments:
+# $1 - 0 - for public subnet; 1 - for private subnet
+# $2 - the number of instances deployed: 1 - one in the public subnet; 2 - another one in the private subnet
+# $3 - the name of the AWS key pair
+# $4 - user name for ssh connection to the EC2 instances
+# $5 - EC2 instance ID the ~/.ssh/config file is being updated for
+# $6 - the private IP address of the current EC2 instance
+# $7 - the public IP of the same instance (or "null" for the instance deployed in the private subnet)
 
 subnet_index="$1"
 ec2_instance_count="$2"

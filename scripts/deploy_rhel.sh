@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# This script prepares the environment for Plaid Quickstart service
-# on the backend for RHEL operating platform
+# This script prepares the environment for Plaid Quickstart backend service
+# to run on RHEL operating platform.
 
 workdir="$1"
 sudo yum update -y

@@ -3,9 +3,10 @@
 # This script is meant to destroy the AWS SecretsManager object
 # previously deployed by terraform and then detached from it.
 #
-# Takes an optional argument - the name of the Secret to be destroyed
-# The default name of the secret it attempted to be found in terraform.tfvars file
-#
+# The default name of the secret is looked up for in terraform.tfvars file.
+
+# Arguments:
+# $1 - the name of the Secret to be destroyed
 
 default="$( egrep -e "^[[:space:]]*aws_secret_name[[:space:]]*=" terraform.tfvars | cut -d\" -f2 | tail -1 )"
 default="${default:-Plaid_Credentials}"

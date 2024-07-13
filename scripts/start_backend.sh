@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+# This script clones the source code of Plaid Quickstart backend service from GitHub,
+# updates it in situ with the user credentials along with the environment and product settings,
+# and starts the service in a tmux session.
+
+# Arguments:
+# $1 - the value of count.index: 0 - pertains public network; 1 - private network
+# $2 - the value the above $1 has to match (i.e. "public" or "private" association)
+#      for the mainstream logic to actually run
+# $3 - "Host" name of the target EC2 instance in the context of ~/.ssh/config file
+# $4 - the value of PLAID_CLIENT_ID environment variable
+# $5 - the value of PLAID_SECRET environment variable
+
 this_index="$1"
 that_index="$(( $2 - 1 ))"
 

@@ -3,6 +3,9 @@
 # This script looks for the AWS SecretsManager object with the specified name.
 # Returns the outcome of the search: success(0) or failure.
 
+# Arguments passed in through "external" "locate_aws_secret" data source:
+# AWS_SECRET_NAME - the name of the SecretsManager object
+
 eval "$(jq -r '@sh "AWS_SECRET_NAME=\(.aws_secret_name)"')"
 
 aws secretsmanager list-secrets | jq -r '.SecretList[]|.Name' | egrep -q -x -e "^${AWS_SECRET_NAME}$"

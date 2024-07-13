@@ -5,6 +5,9 @@
 # unless the AWS SecretsManager object storing the sought values is available.
 # If neither the SecretsManager object nor both variables found, flags the environment as faulty.
 
+# Arguments passed in through "external" "check_env" data source:
+# AWS_SECRET_STATUS : 0 - if the SecretsManager object exists; 1 - otherwise
+
 eval "$(jq -r '@sh "AWS_SECRET_STATUS=\(.aws_secret_status)"')"
 
 CLIENT_VAR_NAME="PLAID_CLIENT_ID"

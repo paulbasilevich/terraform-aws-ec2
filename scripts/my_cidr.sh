@@ -1,16 +1,24 @@
 #!/usr/bin/env bash
 
 # Refer to https://registry.terraform.io/providers/hashicorp/external/latest/docs/data-sources/external
-# for details pertaining to the bash-terraform interface
+# for details pertaining to the bash-terraform interface.
 
-# This script evaluates CIDR block for the security group
-# and returns the value to the calling "external.my_cidr" data source
+# This script evaluates the ingress CIDR block for the security group
+# and returns the value to the calling "external" "my_cidr" data source.
 
 # The script is "self-aware" of the hosting environment.
 # The two options for CIDR block are available:
 #   - <my_host>     this_IP/32
-#   - <my_cird>     the CIDR this host belongs in
+#   - <my_cidr>     the CIDR this host belongs in
 
+# Arguments passed in through "external" "my_cidr" data source:
+# CIDR_SCOPE : expects one of the two values:
+#               my_host - sets master CIDR block to a single address - public IP of the local host
+#               my_cidr - sets master CIDR block to the CIDR the local host belongs in
+# EXTRA_CIDR : additional CIDR block optionally specified by the user (defaults to "none")
+# VPC_CIDR   : the CIDR block allocated to the public subnet of the hosting VPC,
+#              provided that there is also a private subnet set up in the VPC (otherwise - "none")
+              
 eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope) EXTRA_CIDR=\(.extra_cidr) VPC_CIDR=\(.vpc_cidr)"')"
 
 fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"

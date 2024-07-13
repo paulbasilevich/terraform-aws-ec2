@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-# Copy the runtime-environment-specific files to the root folder by running:
-#       .terraform/modules/ec2/scripts/init.sh
+# This script copies the runtime-environment-specific terraform configuration files
+# to the root folder by running:       .terraform/modules/ec2/scripts/init.sh
 
+# Also propagates the terraform variables and outputs
+# from the root submodule to the current directory
+ 
 target="$( pwd )"
 to_update="main.tf"
 this_module="$(

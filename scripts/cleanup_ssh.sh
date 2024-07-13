@@ -2,7 +2,12 @@
 
 # This script restores the original state of ~/.ssh directory
 # effective before "terraform apply".
-# Also terminates the tmux session running Plaid frontend
+# Also terminates the tmux session running Plaid frontend locally.
+
+# Arguments:
+# $1 : if set to "0", the script is called with count.index=0,
+#      which is associated with the first pass at "terraform destroy"
+#      where the script only needs to run
 
 once="$1"
 if [[ $once -eq 0 ]]

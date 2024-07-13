@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script removes the SecretsManager object out of terraform
+# This script removes the SecretsManager object out of terraform scope
 # thus persisting the object in AWS for further reuse.
 
 # Check if there is secr_mrg module is managed by terraform
