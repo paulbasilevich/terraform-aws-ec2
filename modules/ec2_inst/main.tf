@@ -40,6 +40,13 @@ resource "aws_instance" "plaid" {
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT
+      aws ec2 wait instance-status-ok --instance-ids ${self.id}
+    EOT
+  }
+
+  provisioner "local-exec" {
+    quiet   = true
+    command = <<-EOT
       ${var.scripts_home}/append_ssh_config.sh \
         ${count.index} \
         ${local.ec2_instance_count} \

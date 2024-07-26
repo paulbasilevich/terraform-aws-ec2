@@ -84,7 +84,7 @@ resource "aws_lb" "plaid" {
   tags                       = var.common_tags
 }
 
-resource "aws_lb_listener" "app_listener" {
+resource "aws_lb_listener" "plaid" {
   count             = var.ec2_instance_count - 1
   load_balancer_arn = aws_lb.plaid[0].arn
   port              = var.backend_port

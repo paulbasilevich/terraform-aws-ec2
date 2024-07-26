@@ -8,10 +8,10 @@ output "_" {
 #   value = zipmap(
 #     [aws_instance.tf["tf"].id],
 #     [[aws_instance.tf["tf"].public_ip, aws_instance.tf["tf"].private_ip]]
-# 
+#
 #   )
 # }
-# 
+#
 
 output "public_ip" {
   description = "Public IP address of the just-created EC2 instance"
