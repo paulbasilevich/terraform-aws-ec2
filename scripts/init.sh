@@ -48,6 +48,11 @@ then
     do
         if [[ -s "$x" ]]; then cp "$x" "$target"; fi
     done
+
+    if [[ "$target/README.md" ]]
+    then
+        sed -i '' -e "\~Run the following~,\~^$~d; s~After that, r~R~" "$target/README.md"
+    fi
     # Return to the root folder
     popd > /dev/null
 

@@ -29,9 +29,8 @@ Terraform module:
    that can be accomplished by running:     ./destroy_aws_secret.sh.
    From that point on, the local profile reinstates as the sought source of the credentials.
 
-Upon completion of Provision instructions,
-run the following command to initialize the root directory:
-    ./.terraform/modules/ec2/scripts/init.sh
+Run the following command to initialize the root directory:
+    ./scripts/init.sh
 
 After that, running "terraform apply" will deploy Plaid Quickstart service automatically.
 
