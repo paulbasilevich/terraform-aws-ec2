@@ -1,5 +1,5 @@
-deployment_subnet = "public"
-# deployment_subnet = "private"
+# deployment_subnet = "public"
+deployment_subnet = "private"
 
 # aws_secret_name = "Plaid_Credentials"
 # cidr_scope        = "my_host"
@@ -8,4 +8,4 @@ deployment_subnet = "public"
 # ami_name_pattern = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-"
 # ami_name_pattern  = "RHEL-9.3.0_HVM-"
 # ami_name_pattern = "amzn2-"
-# aws_profile       = "Home"
+aws_profile       = "smirk-dev"

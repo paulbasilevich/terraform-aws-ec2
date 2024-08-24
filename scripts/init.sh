@@ -44,9 +44,46 @@ then
         locals.tf
     )
 
+    # Define config variables
+    orig_vars_file="$target/variables.tf"
+    if [[ -s "$orig_vars_file" ]]
+    then
+        # Map AWS config variables to the respective tags used in config file:
+        declare -A cfgmap=(
+            [AWS_ACCESS_KEY_ID]="aws_access_key_id" \
+            [AWS_SECRET_ACCESS_KEY]="aws_secret_access_key" \
+            [AWS_SESSION_TOKEN]="aws_session_token" \
+            [AWS_REGION]="region" \
+            [ACCOUNT_ID]="sso_account_id" \
+        )
+        
+        # Look up the "master" variable.tf file for AWS config variables
+        # For each such one, retrieve the value via "aws configure get"
+        # and persist it to terraform.tfvars.
+        # From security perspective, it is better off to use "export TV_VAR_<var name>=..." technique.
+        tfv="terraform.tfvars"
+        for v in $( grep "variable" "$orig_vars_file" | tr -d '"' | awk '{print $2}' )
+        do
+            if [[ ${cfgmap[$v]+_} ]]
+            then
+                echo $v=\"$( aws configure get ${cfgmap[$v]} )\" >> "$tfv"
+            fi
+        done
+    fi
+
     for x in ${players[@]}
     do
-        if [[ -s "$x" ]]; then cp "$x" "$target"; fi
+        if [[ -s "$x" ]]
+        then
+            y="$target/$x"
+            if [[ -s "$y" ]]    # If the target file exists, append it rather than override
+            then
+                echo -e "\n" >> "$y"
+                cat "$x" >> "$y"
+            else                # Replicate the new file to the "new root" module as is
+                cp "$x" "$target"
+            fi
+        fi
     done
 
     if [[ "$target/README.md" ]]
@@ -56,32 +93,53 @@ then
     # Return to the root folder
     popd > /dev/null
 
-    # Update main.tf file to expose the variables defined in the root module
-    sedf=".sed"
-    cat > "$sedf" << HEAD
+    # Helper function that finds all the env variable
+    # with wildcard names matching the given prefix pattern.
+    # Multiple patterns passed through the command line signature
+    # as a space-delimited list.
+    # Simulates Windows CMD "SET [name pattern]" command.
+    ws(){
+        for _name_pattern in $@
+        do
+            declare -p | cut -d ' ' -f 3- | grep "^$_name_pattern" | sed "s~=\"~=~;s~\"$~~" | grep "^$_name_pattern"
+        done
+    }
+
+    # On exit from this script, this block deletes all the temp files, if any, created by the script.
+    file_name_prefix="tempf_"
+    trap 'for fname in $( ws "$file_name_prefix" ); do rm -f "${fname#*=}"; done' EXIT
+
+    # Update main.tf file to expose the variables defined in the root module:
+    # Create a SED script that replicates each variable definition from "original" root module
+    # prepending each value with "var." and injects the generated statement
+    # into the "module" clause of the bootstrap main.tf file.
+    tempf_sedf=$( mktemp )
+    cat > "$tempf_sedf" << HEAD
 #!/usr/bin/env bash
 sed -E -i '' -e "/}/i\\\\
 HEAD
-    for vname in $( grep variable variables.tf | grep -v "scripts_home" | cut -d\" -f2 )
+    for vname in $( grep "variable" "$my_root/variables.tf" | grep -v "scripts_home" | cut -d\" -f2 )
     do
-        echo "  $vname = var.$vname\\\\" >> "$sedf"
+        echo "  $vname = var.$vname\\\\" >> "$tempf_sedf"
     done
     # vvv Make sure that the target sed script will not add extra blank line at file end:
-    # sed -i '' '$s/\\$//' "$sedf"
+    # sed -i '' '$s/\\$//' "$tempf_sedf"
     IFS_SAVE=$IFS; IFS=$'\n'
     for line in $( cat "$from_main" | egrep -e "^[[:space:]]*[^=]+=[[:space:]]*local.[[:print:]]+$" )
     do
-        echo "$line" >> "$sedf"
+        echo "$line" >> "$tempf_sedf"
     done
     IFS=$IFS_SAVE
-    cat >> "$sedf" << FOOT
+    cat >> "$tempf_sedf" << FOOT
 " "$to_update"
 FOOT
-    chmod +x "$sedf"
-    ./"$sedf"
-    rm "$sedf"
+    chmod +x "$tempf_sedf"
+    "$tempf_sedf"
 
-    # Propagate the output from the original root module to this module:
+    # Propagate the output from the original root module to this module, namely: 
+    # replicate the "original" output, replace each "value"
+    # by prepending it with "module.<new root module name, e.g., ec2>".
+    # Replicate "description", if any, set for each "original" output.
     output="outputs.tf"
     IFS=$'\}'
     for x in $(
