@@ -5,7 +5,7 @@
 
 # Also propagates the terraform variables and outputs
 # from the root submodule to the current directory
- 
+
 target="$( pwd )"
 to_update="main.tf"
 this_module="$(
@@ -56,7 +56,7 @@ then
             [AWS_REGION]="region" \
             [ACCOUNT_ID]="sso_account_id" \
         )
-        
+
         # Look up the "master" variable.tf file for AWS config variables
         # For each such one, retrieve the value via "aws configure get"
         # and persist it to terraform.tfvars.
@@ -136,7 +136,7 @@ FOOT
     chmod +x "$tempf_sedf"
     "$tempf_sedf"
 
-    # Propagate the output from the original root module to this module, namely: 
+    # Propagate the output from the original root module to this module, namely:
     # replicate the "original" output, replace each "value"
     # by prepending it with "module.<new root module name, e.g., ec2>".
     # Replicate "description", if any, set for each "original" output.
