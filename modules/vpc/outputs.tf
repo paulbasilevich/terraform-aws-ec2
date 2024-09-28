@@ -1,11 +1,11 @@
 output "vpc_id" {
   description = "ID of the custom VPC"
-  value       = aws_vpc.plaid.id
+  value       = aws_vpc.smirk.id
 }
 
 output "vpc_cidr" {
   description = "CIDR block allocated for the custom vpc"
-  value       = aws_vpc.plaid.cidr_block
+  value       = aws_vpc.smirk.cidr_block
 }
 
 output "availability_zone" {
@@ -64,17 +64,17 @@ output "private_route_table_id" {
 
 output "igw_id" {
   description = "The ID of the internet gateway"
-  value       = aws_internet_gateway.plaid.id
+  value       = aws_internet_gateway.smirk.id
 }
 
 output "ngw_id" {
   description = "The ID of NAT gateway"
-  value       = aws_nat_gateway.plaid[*].id
+  value       = aws_nat_gateway.smirk[*].id
 }
 
 output "ngw_eip" {
   description = "The elastic IP assigned to NAT gateway"
-  value       = aws_eip.plaid[*].public_ip
+  value       = aws_eip.smirk[*].public_ip
 }
 
 output "ec2_instance_type" {

@@ -17,8 +17,8 @@ module "vpc" {
   ec2_instance_count = var.ec2_instance_count
 }
 
-resource "aws_security_group" "plaid" {
-  name        = "plaid"
+resource "aws_security_group" "smirk" {
+  name        = "smirk"
   description = "Access from the host running TF"
 
   dynamic "ingress" {
@@ -53,9 +53,9 @@ resource "aws_security_group" "plaid" {
   tags   = var.common_tags
 }
 
-resource "aws_lb_target_group" "plaid" {
+resource "aws_lb_target_group" "smirk" {
   count       = var.ec2_instance_count - 1
-  name        = "plaid"
+  name        = "smirk"
   target_type = "instance"
   port        = var.backend_port
   protocol    = "HTTP"
@@ -73,26 +73,26 @@ resource "aws_lb_target_group" "plaid" {
   tags = var.common_tags
 }
 
-resource "aws_lb" "plaid" {
+resource "aws_lb" "smirk" {
   count                      = var.ec2_instance_count - 1
-  name                       = "plaid"
+  name                       = "smirk"
   internal                   = false
   load_balancer_type         = "application"
-  security_groups            = [aws_security_group.plaid.id]
+  security_groups            = [aws_security_group.smirk.id]
   subnets                    = [module.vpc.public_subnet_id, module.vpc.private_subnet_id]
   enable_deletion_protection = false
   tags                       = var.common_tags
 }
 
-resource "aws_lb_listener" "plaid" {
+resource "aws_lb_listener" "smirk" {
   count             = var.ec2_instance_count - 1
-  load_balancer_arn = aws_lb.plaid[0].arn
+  load_balancer_arn = aws_lb.smirk[0].arn
   port              = var.backend_port
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.plaid[0].arn
+    target_group_arn = aws_lb_target_group.smirk[0].arn
   }
 }
 

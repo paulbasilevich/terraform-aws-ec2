@@ -34,24 +34,24 @@ data "external" "check_env" {
   }
 }
 
-resource "aws_secretsmanager_secret" "plaid" {
+resource "aws_secretsmanager_secret" "smirk" {
   name                    = var.aws_secret_name
   recovery_window_in_days = 0
   count                   = local.aws_secret_status != 0 ? 1 : 0
 }
 
-resource "aws_secretsmanager_secret_version" "plaid" {
-  secret_id     = aws_secretsmanager_secret.plaid[0].id
+resource "aws_secretsmanager_secret_version" "smirk" {
+  secret_id     = aws_secretsmanager_secret.smirk[0].id
   secret_string = jsonencode(tomap({ "${var.client_var_name}" = local.plaid_client_id, "${var.secret_var_name}" = local.plaid_secret }))
   count         = local.aws_secret_status != 0 ? 1 : 0
 }
 
-data "aws_secretsmanager_secret" "plaid" {
+data "aws_secretsmanager_secret" "smirk" {
   name  = var.aws_secret_name
   count = local.aws_secret_status == 0 ? 1 : 0
 }
 
-data "aws_secretsmanager_secret_version" "plaid" {
-  secret_id = data.aws_secretsmanager_secret.plaid[0].id
+data "aws_secretsmanager_secret_version" "smirk" {
+  secret_id = data.aws_secretsmanager_secret.smirk[0].id
   count     = local.aws_secret_status == 0 ? 1 : 0
 }

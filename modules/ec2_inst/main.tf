@@ -24,7 +24,7 @@ module "key_pair" {
   scripts_home    = var.scripts_home
 }
 
-resource "aws_instance" "plaid" {
+resource "aws_instance" "smirk" {
   ami                         = module.ami_data.ami
   count                       = local.ec2_instance_count
   instance_type               = module.security.subnet_config[count.index].type
@@ -35,7 +35,7 @@ resource "aws_instance" "plaid" {
   tags                        = var.common_tags
   associate_public_ip_address = count.index == 0 ? true : false
 
-  depends_on = [aws_instance.plaid[0]]
+  depends_on = [aws_instance.smirk[0]]
 
   provisioner "local-exec" {
     quiet   = true
@@ -101,22 +101,22 @@ resource "aws_instance" "plaid" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "plaid" {
+resource "aws_lb_target_group_attachment" "smirk" {
   count            = local.ec2_instance_count - 1
   target_group_arn = module.security.lb_target_group_arn
-  target_id        = aws_instance.plaid[1].id
+  target_id        = aws_instance.smirk[1].id
   port             = var.backend_port
 }
 
 resource "null_resource" "start_frontend_public" {
   count      = local.ec2_instance_count == 1 ? 1 : 0
-  depends_on = [aws_instance.plaid[0]]
+  depends_on = [aws_instance.smirk[0]]
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT
       ${var.scripts_home}/start_frontend.sh \
         ${var.ssh_key_name} \
-        ${aws_instance.plaid[0].public_dns} \
+        ${aws_instance.smirk[0].public_dns} \
         ${var.backend_port}
     EOT
   }
@@ -124,7 +124,7 @@ resource "null_resource" "start_frontend_public" {
 
 resource "null_resource" "start_frontend_private" {
   count      = local.ec2_instance_count > 1 ? 1 : 0
-  depends_on = [aws_instance.plaid[1], aws_lb_target_group_attachment.plaid[0]]
+  depends_on = [aws_instance.smirk[1], aws_lb_target_group_attachment.smirk[0]]
   provisioner "local-exec" {
     quiet   = true
     command = <<-EOT

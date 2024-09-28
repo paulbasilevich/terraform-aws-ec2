@@ -10,7 +10,7 @@ variable "ami_name_pattern" {
 variable "ssh_key_name" {
   type        = string
   description = "Name of the dynamically generated ssh key for connection to the EC2 instance"
-  default     = "plaid"
+  default     = "smirk"
 }
 
 variable "cidr_scope" {
@@ -49,7 +49,7 @@ variable "subnet_config" {
 variable "aws_secret_name" {
   type        = string
   description = "Name of the AWS secret"
-  default     = "Plaid_Credentials"
+  default     = "Smirk_Credentials"
 }
 
 variable "scripts_home" {
@@ -62,7 +62,7 @@ variable "common_tags" {
   description = "Tags to be applied to all resources"
   type        = map(string)
   default = {
-    Name = "Plaid"
+    Name = "Smirk-Health"
   }
 }
 

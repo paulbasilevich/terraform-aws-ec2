@@ -12,7 +12,7 @@ Terraform module:
   for introduction to Plaid technology);
 
 - Sets up the local ssh configuration for straightforward ssh access, namely:
-    ssh <key pair name>   (e.g., ssh plaid)
+    ssh <key pair name>   (e.g., ssh smirk)
 
 - Initially requires Plaid Quickstart credentials set up in the local profile
   (e.g., in ~/.bash_profile file) as follows:
@@ -61,7 +61,7 @@ For deployment_subnet = "public", the process involves the following logical ste
     - Create an EC2 instance in the public subnet with a public IP address assigned.
     
     - In the local ~/.ssh/config file, append a code block that allows ssh access to the EC2 instance
-      by the following command pattern: ssh <host_name> (where host_name defaults to "plaid").
+      by the following command pattern: ssh <host_name> (where host_name defaults to "smirk").
  
     - Using ssh access, install the software required to run Plaid Quickstart backend service
       on the deployed EC2 instance and start the service.
@@ -84,7 +84,7 @@ For deployment_subnet = "private", the process performs the following extra step
     
     - Similarly to the pertaining step in the public subnet configuration,
       in the local ~/.ssh/config file, append a code block that allows ssh access to the EC2 instance
-      by the following command pattern: ssh <host_name> (where host_name defaults to "plaid").
+      by the following command pattern: ssh <host_name> (where host_name defaults to "smirk").
       Use the private IP address for "HostName" and refer to the code block pertaining to the EC2
       set up in the public subnet as a bastion leveraging "ProxyJump <bastion host name>" statement.
     

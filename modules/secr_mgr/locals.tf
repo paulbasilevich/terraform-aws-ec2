@@ -7,9 +7,9 @@ locals {
 }
 
 locals {
-  plaid_client_id = local.aws_secret_status != 0 ? join(", ", split(" ", data.external.check_env.result["plaid_client_id"])) : jsondecode(data.aws_secretsmanager_secret_version.plaid[0].secret_string)[var.client_var_name]
+  plaid_client_id = local.aws_secret_status != 0 ? join(", ", split(" ", data.external.check_env.result["plaid_client_id"])) : jsondecode(data.aws_secretsmanager_secret_version.smirk[0].secret_string)[var.client_var_name]
 }
 
 locals {
-  plaid_secret = local.aws_secret_status != 0 ? join(", ", split(" ", data.external.check_env.result["plaid_secret"])) : jsondecode(data.aws_secretsmanager_secret_version.plaid[0].secret_string)[var.secret_var_name]
+  plaid_secret = local.aws_secret_status != 0 ? join(", ", split(" ", data.external.check_env.result["plaid_secret"])) : jsondecode(data.aws_secretsmanager_secret_version.smirk[0].secret_string)[var.secret_var_name]
 }

@@ -7,10 +7,10 @@ deploys the front end locally.
 This submodule creates a key pair for SSH access to the target EC2 instances
 being deployed in the public and, optionally, private subnet of the pre-created hosting VPC.
 
-The key name defaulted to <plaid> can be set (overriden) in the top-level <terraform.tfvars> file.
+The key name defaulted to <smirk> can be set (overriden) in the top-level <terraform.tfvars> file.
 
 Updates ~/.ssh/config file to streamline the SSH connection down to the following instruction:
-        ssh plaid
+        ssh smirk
 
 That SSH connection signature transparently works both for "public" and "private" deployments
 insofar as, for the private deployment, a bastion host gets automatically defined in ~/.ssh/config file

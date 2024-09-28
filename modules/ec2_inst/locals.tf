@@ -3,7 +3,7 @@ locals {
 }
 
 locals {
-  plaid_root_directory = module.key_pair.ssh_key_name
+  smirk_root_directory = module.key_pair.ssh_key_name
 }
 
 locals {

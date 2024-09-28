@@ -1,6 +1,6 @@
 output "security_group" {
   description = "Security group Id for the EC2 instance being created"
-  value       = aws_security_group.plaid.id
+  value       = aws_security_group.smirk.id
 }
 
 output "cidr_block" {
@@ -54,10 +54,10 @@ output "ec2_instance_type" {
 
 output "lb_target_group_arn" {
   description = "ARN of the group associated with the load balancer"
-  value       = var.ec2_instance_count > 1 ? aws_lb_target_group.plaid[0].arn : null
+  value       = var.ec2_instance_count > 1 ? aws_lb_target_group.smirk[0].arn : null
 }
 
 output "lb_dns_name" {
   description = "DNS name of the load balancer"
-  value       = var.ec2_instance_count > 1 ? aws_lb.plaid[0].dns_name : null
+  value       = var.ec2_instance_count > 1 ? aws_lb.smirk[0].dns_name : null
 }

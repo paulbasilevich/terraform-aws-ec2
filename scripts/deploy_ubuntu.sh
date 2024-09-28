@@ -7,9 +7,9 @@ workdir="$1"
 sudo apt-get update
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install nodejs -y
-echo Node
+echo -n "Node: "
 node --version
-echo Npm
+echo -n "Npm :"
 npm --version
 sleep 10
 git clone https://github.com/plaid/quickstart.git ${workdir}
