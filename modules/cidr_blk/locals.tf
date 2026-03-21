@@ -3,5 +3,6 @@ locals {
 }
 
 locals {
-  scripts_home = fileexists("./scripts/init.sh") ? "./scripts" : "./.terraform/modules/ec2/scripts"
+  cidr_blocks = split(" ", values(data.external.my_cidr.result)[0])
 }
+

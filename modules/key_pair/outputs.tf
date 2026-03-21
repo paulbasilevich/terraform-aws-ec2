@@ -35,7 +35,3 @@ output "aws_secret_name" {
   value       = module.secr_mgr.aws_secret_name
 }
 
-output "plaid_external" {
-  description = "Enforce external Plaid credentials"
-  value       = var.plaid_external
-}
