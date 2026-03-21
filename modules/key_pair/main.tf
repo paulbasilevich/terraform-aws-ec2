@@ -4,9 +4,9 @@ module "provider" {
 }
 
 module "secr_mgr" {
-  source          = "../../modules/secr_mgr"
-  aws_secret_name = var.aws_secret_name
-  scripts_home    = var.scripts_home
+  source         = "../../modules/secr_mgr"
+  scripts_home   = var.scripts_home
+  plaid_external = var.plaid_external
 }
 
 data "external" "private_key" {
@@ -17,8 +17,3 @@ data "external" "private_key" {
     env_status     = module.secr_mgr.env_status
   }
 }
-
-# Must match key_name and config_tag
-# as key_name is the only relevant attribute retrievable from "self" -
-# a must for provisioner-destroyer.
-#

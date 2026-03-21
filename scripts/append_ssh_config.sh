@@ -24,14 +24,14 @@
 subnet_index="$1"
 ec2_instance_count="$2"
 key_name="$3"
-user="$4"
-instance_id="$5"
-private_ip="$6"
-public_ip="$7"
+public_suffix="$4"
+user="$5"
+instance_id="$6"
+private_ip="$7"
+public_ip="$8"
 
 config_file=~/.ssh/config
 config_save=~/.ssh/config_backup_tf
-public_suffix="jump"
 
 aws ec2 wait instance-status-ok --instance-ids "$instance_id"
 
@@ -40,14 +40,19 @@ if [[ $subnet_index -eq 0 ]]
 then
     case $ec2_instance_count in
         1) host_name="$key_name" ;;
-        *) host_name="${key_name}_${public_suffix}" ;;
+        *) host_name="${key_name}${public_suffix}" ;;
     esac
     host_ip="$public_ip"
     cp -fp "$config_file" "$config_save"
 else
     host_name="$key_name"
     host_ip="$private_ip"
-fi    
+fi
+
+if [[ ! -d ~/.ssh ]]; then
+    midir -p ~/.ssh
+    chmod -R 700 ~/.ssh
+fi
 
 cat >> $config_file << TAG
 Host $host_name
@@ -62,7 +67,7 @@ TAG
 if [[ $subnet_index -ne 0 ]]
 then
     cat >> $config_file << TAG1
-    ProxyJump ${key_name}_${public_suffix}
+    ProxyJump ${key_name}${public_suffix}
 TAG1
 fi
 

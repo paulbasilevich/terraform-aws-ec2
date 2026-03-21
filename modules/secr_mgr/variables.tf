@@ -19,7 +19,7 @@ variable "secret_var_name" {
 variable "aws_secret_name" {
   type        = string
   description = "Name of the AWS secret"
-  default     = "Plaid_Credentials"
+  default     = "Vault"
 }
 
 variable "scripts_home" {
@@ -28,3 +28,14 @@ variable "scripts_home" {
   default     = "./scripts"
 }
 
+variable "plaid_external" {
+  type        = bool
+  description = "Enforce external Plaid credentials"
+  default     = false
+}
+
+variable "common_name_root" {
+  type        = string
+  description = "Family name for all deployed resources"
+  default     = "Sandbox"
+}

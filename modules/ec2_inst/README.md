@@ -12,7 +12,10 @@ For "private" deployment, the traffic between the internet and the EC2 instance 
 a load balancer set up in the cited VPC.
 
 In both types of deployment, the EC2 instance can be connected to through ssh from the local environment
-by calling:     ssh <"Host" name configured by this module in ~/.ssh/config file. (Defaults to "smirk")>
+by calling:     ssh <"Host" name configured by this module in ~/.ssh/config file. (Defaults to "pilot")>
 
 In case of "private" deployment, the traffic is routed through a "bastion" - another EC2 instance
 deployed by this module in the public subnet and defined in ~/.ssh/config file accordingly.
+
+All the pertaining ssh settings are being added to the local ~/.ssh/config file at <terraform apply>
+and reverted at <terraform destroy> automatically.
