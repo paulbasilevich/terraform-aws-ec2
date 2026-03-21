@@ -6,9 +6,10 @@ module "ec2_inst" {
   extra_cidr        = var.extra_cidr
   aws_profile       = var.aws_profile
   subnet_config     = var.subnet_config
-  aws_secret_name   = var.aws_secret_name
   scripts_home      = local.scripts_home
-  common_tags       = var.common_tags
+  tags_bootstrap    = var.tags_bootstrap
   vpc_cidr          = var.vpc_cidr
   deployment_subnet = var.deployment_subnet
+  plaid_external    = var.plaid_external
+  time_zone = var.time_zone
 }

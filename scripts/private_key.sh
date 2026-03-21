@@ -11,35 +11,64 @@
 # ENV_STATUS - 0 : the local environment is all set for the process to run
 #            - 1 : the local environment is faulty; the process cannot run
 
-
-eval "$(jq -r '@sh "KEY_NAME=\(.ssh_key_name) SSH_TAG=\(.ssh_config_tag) ENV_STATUS=\(.env_status)"')"
+eval "$(jq -r '@sh "
+    KEY_NAME=\(.ssh_key_name)
+    SSH_TAG=\(.ssh_config_tag)
+    ENV_STATUS=\(.env_status)
+    "')"
 # SSH_TAG is merely to demonstrate multiple input json key-pairs.
 # Here .ssh_key_name is the only attribute retrievable from "self" - a must for destroyer-provisioner.
 # The idea is to maintain consistency between "apply" and "destroy" functionality.
 # In fact, SSH_TAG is not used in this script.
 
-if [[ $ENV_STATUS -eq 0 ]]
-then
-    pk_file=~/.ssh/${KEY_NAME}.pem
+if [[ "$ENV_STATUS" -eq 0 ]]; then
+    if [[ ! -d ~/.ssh ]]; then
+        midir -p ~/.ssh
+        chmod -R 700 ~/.ssh
+    fi
+
+    pk_file="$HOME/.ssh/${KEY_NAME}.pem"
 
     # Check if the key already exists and delete it if so
     is_key_there="$(
-    aws ec2 describe-key-pairs --key-names "$KEY_NAME" 2> /dev/null \
-        | jq -r '.KeyPairs[]|.KeyName'
+      aws ec2 describe-key-pairs \
+        --key-names "$KEY_NAME" \
+        --output json 2>/dev/null \
+      | jq -r '.KeyPairs[]?.KeyName'
     )"
 
-    if [[ "$is_key_there" == "$KEY_NAME" ]]; then aws ec2 delete-key-pair --key-name "$KEY_NAME"; fi
-    if [[ -f "$pk_file" ]]; then rm -f "$pk_file"; fi
+    if [[ "$is_key_there" == "$KEY_NAME" ]]; then
+        aws ec2 delete-key-pair --key-name "$KEY_NAME" >/dev/null
+    fi
+
+    [[ -f "$pk_file" ]] && rm -f "$pk_file"
 
     # Create the private key and save it in $pk_file
-    aws ec2 create-key-pair --key-name "$KEY_NAME" | jq -r '.KeyMaterial' > "$pk_file"
+    aws ec2 create-key-pair \
+      --key-name "$KEY_NAME" \
+      --output json \
+    | jq -r '.KeyMaterial' > "$pk_file"
+
     chmod 400 "$pk_file"
     # Here we cannot append ~/.ssh/config with the new Host definition: HostName and User are not known yet
 
-    PRIVATE_KEY="$( cat "$pk_file" )"
+    PRIVATE_KEY="$(<"$pk_file")"
 else
-    PRIVATE_KEY=$ENV_STATUS
+    PRIVATE_KEY="$ENV_STATUS"
 fi
 
-jq -n --arg private_key "$PRIVATE_KEY" '{"private_key":$private_key}'
+# If the ec2 instance is not running, we are in "plan" mode, rather than "apply".
+# If terraform is running "plan" mode,
+# upon its completion the environment should stay intact, as if there were no "plan".
+# Thus, any leftovers pertaining to key_pair not handled by terraform should be deleted.
 
+tf_mode="$( ps aux \
+    | egrep -o "[[:space:]]terraform[[:space:]]+[[:graph:]]+" \
+    | awk '{print $2}' \
+    )"
+case "$tf_mode" in
+    "plan") "$( dirname "$0" )"/cleanup_ssh.sh 0 > /dev/null ;;
+         *) ;;
+esac
+
+jq -n --arg private_key "$PRIVATE_KEY" '{"private_key": $private_key}'

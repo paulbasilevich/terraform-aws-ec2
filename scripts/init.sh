@@ -46,21 +46,21 @@ then
 
     # Define config variables
     orig_vars_file="$target/variables.tf"
-    egrep -q -e "^aws_profile[[:space:]]+=[[:space:]]+[[:graph:]]*smirk[[:graph:]]*\"" "$orig_vars_file" 2> /dev/null
-    is_smirk=$?
-    if [[ $is_smirk -ne 0 ]]
+    egrep -q -e "^aws_profile[[:space:]]+=[[:space:]]+[[:graph:]]*pilot[[:graph:]]*\"" "$orig_vars_file" 2> /dev/null
+    is_pilot=$?
+    if [[ $is_pilot -ne 0 ]]
     then
         current_aws_profile="$( { grep -B 1 $( aws configure get aws_access_key_id ) ~/.aws/credentials 2> /dev/null \
         | tr '\n' ' ' | sed -E -e "s~[[:space:]]+--[[:space:]]+~\n~g" \
-        | grep -v default \
+        | grep -v __default__ \
         | tr -d '[]' \
         | sed -E -e "s~aws_access_key_id[[:space:]]+=[[:space:]]+[[:graph:]]{20}[[:space:]]*~~" \
         2> /dev/null; } || { echo default; } )"
-        echo "$current_aws_profile" | grep -q "smirk"
-        is_smirk=$?
+        echo "$current_aws_profile" | grep -q "pilot"
+        is_pilot=$?
     fi
 
-    if [[ -s "$orig_vars_file" && $is_smirk -eq 0 ]]
+    if [[ -s "$orig_vars_file" && $is_pilot -eq 0 ]]
     then
         # Map AWS config variables to the respective tags used in config file:
         declare -A cfgmap=(

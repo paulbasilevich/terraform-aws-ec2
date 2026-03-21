@@ -27,12 +27,6 @@ variable "aws_profile" {
   default     = "default"
 }
 
-variable "aws_secret_name" {
-  type        = string
-  description = "Name of the AWS secret"
-  default     = "Plaid_Credentials"
-}
-
 variable "scripts_home" {
   type        = string
   description = "Centralized location of the shell scripts"
@@ -60,18 +54,24 @@ variable "subnet_config" {
   ]
 }
 
-variable "common_tags" {
-  description = "Tags to be applied to all resources"
+variable "tags_bootstrap" {
+  description = "Blueprint for tags to be generated from and applied to all resources"
   type        = map(string)
   default = {
-    Name = "Plaid"
+    Name = "Showcase"
   }
 }
 
-variable "ec2_instance_count" {
-  description = "If 1 - create only public subnet; 2 - add private subnet"
+variable "deployment_subnet" {
+  description = "Target subnet for provisioning EC2 instance: 'public' or 'private'"
+  type        = string
+  default     = "public"
+}
+
+variable "frontend_port" {
+  description = "Port the frontend communicates with the backend server through"
   type        = number
-  default     = 1
+  default     = 3000
 }
 
 variable "backend_port" {
@@ -79,3 +79,10 @@ variable "backend_port" {
   type        = number
   default     = 8000
 }
+
+variable "time_zone" {
+  type        = string
+  description = "Time zone current time is evaluated in. Default - retrived from the system"
+  default     = ""
+}
+

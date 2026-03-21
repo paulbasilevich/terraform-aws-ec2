@@ -1,24 +1,14 @@
-module "cidr_blk" {
-  source             = "../../modules/cidr_blk"
-  cidr_scope         = var.cidr_scope
-  vpc_cidr           = var.vpc_cidr
-  extra_cidr         = var.extra_cidr
-  aws_profile        = var.aws_profile
-  aws_secret_name    = var.aws_secret_name
-  scripts_home       = var.scripts_home
-  ec2_instance_count = var.ec2_instance_count
-}
-
 module "vpc" {
-  source             = "../../modules/vpc"
-  vpc_cidr           = var.vpc_cidr
-  subnet_config      = var.subnet_config
-  common_tags        = var.common_tags
-  ec2_instance_count = var.ec2_instance_count
+  source            = "../../modules/vpc"
+  vpc_cidr          = var.vpc_cidr
+  deployment_subnet = var.deployment_subnet
+  scripts_home      = var.scripts_home
+  tags_bootstrap    = var.tags_bootstrap
+  time_zone         = var.time_zone
 }
 
-resource "aws_security_group" "smirk" {
-  name        = "smirk"
+resource "aws_security_group" "pilot" {
+  name        = "pilot"
   description = "Access from the host running TF"
 
   dynamic "ingress" {
@@ -50,12 +40,13 @@ resource "aws_security_group" "smirk" {
   }
 
   vpc_id = module.vpc.vpc_id
-  tags   = var.common_tags
+  tags = { for k, v in module.vpc.common_tags[0] :
+  k => "${regex("[^-]+", "${v}")}-SG" }
 }
 
-resource "aws_lb_target_group" "smirk" {
-  count       = var.ec2_instance_count - 1
-  name        = "smirk"
+resource "aws_lb_target_group" "pilot" {
+  count       = module.vpc.ec2_instance_count - 1
+  name        = "pilot"
   target_type = "instance"
   port        = var.backend_port
   protocol    = "HTTP"
@@ -70,29 +61,31 @@ resource "aws_lb_target_group" "smirk" {
     matcher             = "200"
   }
 
-  tags = var.common_tags
+  tags = { for k, v in module.vpc.common_tags[count.index] :
+  k => "${regex("[^-]+", "${v}")}-LBTG" }
 }
 
-resource "aws_lb" "smirk" {
-  count                      = var.ec2_instance_count - 1
-  name                       = "smirk"
+resource "aws_lb" "pilot" {
+  count                      = module.vpc.ec2_instance_count - 1
+  name                       = "pilot"
   internal                   = false
   load_balancer_type         = "application"
-  security_groups            = [aws_security_group.smirk.id]
+  security_groups            = [aws_security_group.pilot.id]
   subnets                    = [module.vpc.public_subnet_id, module.vpc.private_subnet_id]
   enable_deletion_protection = false
-  tags                       = var.common_tags
+  tags = { for k, v in module.vpc.common_tags[count.index] :
+  k => "${regex("[^-]+", "${v}")}-LB" }
 }
 
-resource "aws_lb_listener" "smirk" {
-  count             = var.ec2_instance_count - 1
-  load_balancer_arn = aws_lb.smirk[0].arn
+resource "aws_lb_listener" "pilot" {
+  count             = module.vpc.ec2_instance_count - 1
+  load_balancer_arn = aws_lb.pilot[0].arn
   port              = var.backend_port
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.smirk[0].arn
+    target_group_arn = aws_lb_target_group.pilot[0].arn
   }
 }
 

@@ -18,7 +18,7 @@
 # EXTRA_CIDR : additional CIDR block optionally specified by the user (defaults to "none")
 # VPC_CIDR   : the CIDR block allocated to the public subnet of the hosting VPC,
 #              provided that there is also a private subnet set up in the VPC (otherwise - "none")
-              
+
 eval "$(jq -r '@sh "CIDR_SCOPE=\(.cidr_scope) EXTRA_CIDR=\(.extra_cidr) VPC_CIDR=\(.vpc_cidr)"')"
 
 fmt_cidr="^[1-9][[:digit:]]{1,2}(.[[:digit:]]{1,3}){3}/[[:digit:]]{1,2}$"
@@ -65,7 +65,7 @@ jq -n --arg cidr_range "$RANGE" '{"cidr_range":$cidr_range}'
 #             program = ["bash", "${path.module}/my_cidr.sh"]
 #           }
 
-# To incorporate $result value in any TF statement that relies on it, 
+# To incorporate $result value in any TF statement that relies on it,
 # use the following signature on the spot where $result is expected:
 
 #               join(",", values(data.external.my_cidr.result))

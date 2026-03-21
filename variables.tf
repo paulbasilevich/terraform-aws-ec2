@@ -1,16 +1,13 @@
 variable "ami_name_pattern" {
   type        = string
   description = "Wildcard name pattern the target AMI ID is searched by"
-  default     = "ubuntu-pro-server/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-pro-server-"
-  # default = "RHEL-9.3.0_HVM-"
-  # default = "RHEL-"
-  # default = "amzn2-"
+  default     = "ubuntu-pro-server/images/hvm-ssd-gp3"
 }
 
 variable "ssh_key_name" {
   type        = string
   description = "Name of the dynamically generated ssh key for connection to the EC2 instance"
-  default     = "smirk"
+  default     = "pilot"
 }
 
 variable "cidr_scope" {
@@ -46,24 +43,10 @@ variable "subnet_config" {
   ]
 }
 
-variable "aws_secret_name" {
-  type        = string
-  description = "Name of the AWS secret"
-  default     = "Smirk_Credentials"
-}
-
 variable "scripts_home" {
   type        = string
   description = "Centralized location of the shell scripts"
   default     = "./scripts"
-}
-
-variable "common_tags" {
-  description = "Tags to be applied to all resources"
-  type        = map(string)
-  default = {
-    Name = "Smirk-Health"
-  }
 }
 
 variable "vpc_cidr" {
@@ -77,3 +60,30 @@ variable "deployment_subnet" {
   type        = string
   default     = "public"
 }
+
+variable "plaid_external" {
+  type        = bool
+  description = "Enforce external Plaid credentials"
+  default     = false
+}
+
+variable "lb_suffix" {
+  type        = string
+  description = "Suffix to ssh Host running the load balancer. Appends to the Host running the app."
+  default     = "f"
+}
+
+variable "tags_bootstrap" {
+  description = "Blueprint for tags to be generated from and applied to all resources"
+  type        = map(string)
+  default = {
+    Name = "Showcase"
+  }
+}
+
+variable "time_zone" {
+  type = string
+  description = "Time zone current time is evaluated in. Default - retrived from the system"
+  default = ""
+}
+
