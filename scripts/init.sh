@@ -7,6 +7,7 @@
 # from the root submodule to the current directory
 
 target="$( pwd )"
+workspace_name="$( echo "${PWD#$HOME/}" | tr '/' '_' )"
 to_update="main.tf"
 this_module="$(
     egrep -e "^[[:space:]]*module[[:space:]]+[\"][^\"]+[\"][[:space:]]*{" "$to_update" \
@@ -31,8 +32,7 @@ done
 # Up to the parent directory for terraform config files:
 cd ..
 
-if [[ "$my_root" != "." ]]
-then
+if [[ "$my_root" != "." ]]; then
     from_output="$( pwd )/outputs.tf"
     from_main="$( pwd )/main.tf"
 
@@ -60,8 +60,7 @@ then
         is_pilot=$?
     fi
 
-    if [[ -s "$orig_vars_file" && $is_pilot -eq 0 ]]
-    then
+    if [[ -s "$orig_vars_file" && $is_pilot -eq 0 ]]; then
         # Map AWS config variables to the respective tags used in config file:
         declare -A cfgmap=(
             [AWS_ACCESS_KEY_ID]="aws_access_key_id" \
@@ -76,8 +75,7 @@ then
         # and persist it to terraform.tfvars.
         # From security perspective, it is better off to use "export TV_VAR_<var name>=..." technique.
         tfv="terraform.tfvars"
-        for v in $( grep "variable" "$orig_vars_file" | tr -d '"' | awk '{print $2}' )
-        do
+        for v in $( grep "variable" "$orig_vars_file" | tr -d '"' | awk '{print $2}' ); do
             if [[ ${cfgmap[$v]+_} ]]
             then
                 echo $v=\"$( aws configure get ${cfgmap[$v]} )\" >> "$tfv"
@@ -85,13 +83,10 @@ then
         done
     fi
 
-    for x in ${players[@]}
-    do
-        if [[ -s "$x" ]]
-        then
+    for x in ${players[@]}; do
+        if [[ -s "$x" ]]; then
             y="$target/$x"
-            if [[ -s "$y" ]]    # If the target file exists, append it rather than override
-            then
+            if [[ -s "$y" ]]; then  # If the target file exists, append it rather than override
                 echo -e "\n" >> "$y"
                 cat "$x" >> "$y"
             else                # Replicate the new file to the "new root" module as is
@@ -100,8 +95,7 @@ then
         fi
     done
 
-    if [[ "$target/README.md" ]]
-    then
+    if [[ "$target/README.md" ]]; then
         sed -i '' -e "\~Run the following~,\~^$~d; s~After that, r~R~" "$target/README.md"
     fi
     # Return to the root folder
@@ -132,15 +126,13 @@ then
 #!/usr/bin/env bash
 sed -E -i '' -e "/}/i\\\\
 HEAD
-    for vname in $( grep "variable" "$my_root/variables.tf" | grep -v "scripts_home" | cut -d\" -f2 )
-    do
+    for vname in $( grep "variable" "$my_root/variables.tf" | grep -v "scripts_home" | cut -d\" -f2 ); do
         echo "  $vname = var.$vname\\\\" >> "$tempf_sedf"
     done
     # vvv Make sure that the target sed script will not add extra blank line at file end:
     # sed -i '' '$s/\\$//' "$tempf_sedf"
     IFS_SAVE=$IFS; IFS=$'\n'
-    for line in $( cat "$from_main" | egrep -e "^[[:space:]]*[^=]+=[[:space:]]*local.[[:print:]]+$" )
-    do
+    for line in $( cat "$from_main" | egrep -e "^[[:space:]]*[^=]+=[[:space:]]*local.[[:print:]]+$" ); do
         echo "$line" >> "$tempf_sedf"
     done
     IFS=$IFS_SAVE
@@ -162,11 +154,9 @@ FOOT
         )
     do
         IFS=$'\n'
-        for y in ${x[@]}
-        do
+        for y in ${x[@]}; do
             echo "$y" | egrep -q -e "^[[:space:]]*output[[:space:]]+[\"][^\"]+[\"][[:space:]]*{"
-            if [[ $? -eq 0 ]]
-            then
+            if [[ $? -eq 0 ]]; then
                 name="$( echo "$y" | cut -d\" -f2 )"
             fi
             echo $y
@@ -175,11 +165,17 @@ FOOT
         IFS=$'\}'
     done > "$output"
 
+    qry_workspace="$( terraform workspace list | grep -o "$workspace_name" )"
+    if [[ "$qry_workspace" == "$workspace_name" ]]; then
+        terraform workspace select "$workspace_name"
+    else
+        terraform workspace new "$workspace_name" > /dev/null
+    fi
+
     terraform fmt > /dev/null
 fi
 
-if [[ -s "README.md" ]]
-then
+if [[ -s "README.md" ]]; then
     echo "Refer to README.md file for instructions and suggestions."
 else
     echo "Initialization complete."
