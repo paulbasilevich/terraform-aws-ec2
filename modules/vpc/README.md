@@ -1,14 +1,12 @@
 # terraform-aws-ec2
 Terraform module:
-Creates an EC2 instance with access secured to the local host.
-Deploys Plaid backend on the instance.
+Creates an EC2 instance and deploys Plaid Quickstart backend service on it.
 Deploys the front end locally.
 
-
-This submodule creates a VPC where the EC2 instance running Plaid backend service is meant to be deployed.
+This submodule creates a VPC where the EC2 instance running Plaid Quickstart backend service is meant to be deployed.
 
 The VPC networking structure is controlled
-by "deployment_subnet" environment variable, the default value set to "public".
+by "deployment_subnet" environment variable, the default value set to "private".
 
 For deployment_subnet = "public", the process involves the following logical steps:
 

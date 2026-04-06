@@ -7,6 +7,7 @@ module "secr_mgr" {
   source         = "../../modules/secr_mgr"
   scripts_home   = var.scripts_home
   plaid_external = var.plaid_external
+  tags_bootstrap = var.tags_bootstrap
 }
 
 data "external" "private_key" {

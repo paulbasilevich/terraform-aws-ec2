@@ -83,11 +83,6 @@ output "subnet_suffix" {
   value       = module.vpc.subnet_suffix
 }
 
-output "common_name_root" {
-  description = "Family name for all deployed resources"
-  value       = module.vpc.common_name_root
-}
-
 output "deployed_at" {
   description = "Current time stamp"
   value       = module.vpc.deployed_at

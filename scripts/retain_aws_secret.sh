@@ -2,6 +2,7 @@
 
 # This script removes the SecretsManager object out of terraform scope
 # thus persisting the object in AWS for further reuse.
+# Expects no arguments
 
 # Check if there is secr_mrg module is managed by terraform
 module="secr_mgr"
@@ -21,7 +22,7 @@ then
         do
             terraform state rm "$fullspec" > /dev/null
         done
-        echo "Done. To destroy the rest of the deployed resourses run: terraform destroy -auto-approve"
+        echo -e "Done.\nTo destroy the rest of the deployed resourses run: terraform destroy -auto-approve"
     fi
 else
     echo "Module <${module}> is not managed by terraform."

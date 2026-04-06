@@ -1,7 +1,6 @@
 # terraform-aws-ec2
 Terraform module:
-Creates an EC2 instance with access secured to the local host.
-Deploys Plaid backend on the instance.
+Creates an EC2 instance and deploys Plaid Quickstart backend service on it.
 Deploys the front end locally.
 
 This submodule:

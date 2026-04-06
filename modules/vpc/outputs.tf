@@ -125,7 +125,3 @@ output "subnet_suffix" {
   value       = local.subnet_suffix
 }
 
-output "common_name_root" {
-  description = "Family name for all deployed resources"
-  value       = local.common_name_root
-}

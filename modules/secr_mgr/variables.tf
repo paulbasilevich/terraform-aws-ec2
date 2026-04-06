@@ -34,8 +34,10 @@ variable "plaid_external" {
   default     = false
 }
 
-variable "common_name_root" {
-  type        = string
-  description = "Family name for all deployed resources"
-  default     = "Sandbox"
+variable "tags_bootstrap" {
+  description = "Blueprint for tags to be generated from and applied to all resources"
+  type        = map(string)
+  default = {
+    Name = "Showcase"
+  }
 }

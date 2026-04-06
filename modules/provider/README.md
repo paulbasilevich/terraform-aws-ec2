@@ -1,8 +1,7 @@
 # terraform-aws-ec2
 Terraform module:
-creates an EC2 instance with access secured to the local host
-deploys Plaid backend on the instance
-deploys the front end locally.
+Creates an EC2 instance and deploys Plaid Quickstart backend service on it.
+Deploys the front end locally.
 
 This submodule defines the external provider specs: <aws> and <external>.
 The AWS profile can be set (overriden) in the top-level <terraform.tfvars> file (defaults to "default").

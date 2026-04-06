@@ -82,7 +82,3 @@ locals {
   ]
 }
 
-locals {
-  common_name_root = element(values(local.common_tags[0]), 0)
-}
-

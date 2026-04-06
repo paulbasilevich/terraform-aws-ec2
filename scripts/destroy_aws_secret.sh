@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 
 # This script is meant to destroy the AWS SecretsManager object
-# previously deployed by terraform and then detached from it.
-#
-# The default name of the secret is looked up for in terraform.tfvars file.
+# previously deployed by terraform and then detached from it, i.e., autonomized.
 
-# Arguments:
-# $1 - the name of the Secret to be destroyed
+# No arguments required
+# Usage:  ./zds  (links to .../destroy_aws_secret.sh )
 
-default="$( egrep -e "^[[:space:]]*aws_secret_name[[:space:]]*=" terraform.tfvars | cut -d\" -f2 | tail -1 )"
-default="${default:-Vault}"
-aws_secret_name="${1:-$default}"
+aws_secret_name="Vault"
 
 arn="$( aws secretsmanager list-secrets --filters "Key=name,Values=$aws_secret_name" | jq -r '.SecretList[]|.ARN' )"
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # This script opens the web page identified by the title of its tab
+# Takes 2 optional arguments defaulted as shown below
 
 BROWSER="${1:-Google Chrome}"
 TAB_TITLE="${2:-Plaid Quickstart}"
@@ -32,7 +33,7 @@ tell application \"$BROWSER\"
         -- click the button
         execute t javascript \"
             (function () {
-              const buttons = ['Launch Link', 'Continue as guest'];
+              const buttons = null;
               const timeoutMs = 5000;
               const pollMs = 100;
 

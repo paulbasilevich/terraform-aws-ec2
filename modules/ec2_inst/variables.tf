@@ -16,6 +16,12 @@ variable "lb_suffix" {
   default     = "f"
 }
 
+variable "static_extra_key" {
+  type        = string
+  description = "Static extra ssh key for short typing"
+  default     = "h"
+}
+
 variable "cidr_scope" {
   type        = string
   description = "Type of ingress CIDR block: 'my_host' - my_IP/32; 'my_cidr' - CIDR this host is on"

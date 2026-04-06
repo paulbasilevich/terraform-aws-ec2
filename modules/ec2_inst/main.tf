@@ -19,12 +19,12 @@ module "ami_data" {
 }
 
 module "key_pair" {
-  source           = "../../modules/key_pair"
-  ssh_key_name     = var.ssh_key_name
-  aws_profile      = var.aws_profile
-  scripts_home     = var.scripts_home
-  plaid_external   = var.plaid_external
-  common_name_root = module.security.common_name_root
+  source         = "../../modules/key_pair"
+  ssh_key_name   = var.ssh_key_name
+  aws_profile    = var.aws_profile
+  scripts_home   = var.scripts_home
+  plaid_external = var.plaid_external
+  tags_bootstrap = var.tags_bootstrap
 }
 
 resource "aws_instance" "pilot" {
@@ -59,7 +59,8 @@ resource "aws_instance" "pilot" {
         ${module.ami_data.user} \
         ${self.id} \
         ${self.private_ip} \
-        ${self.public_ip}
+        ${self.public_ip} \
+        ${var.static_extra_key}
     EOT
   }
 

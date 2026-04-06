@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # This script closes the web page identified by the title of its tab
+# Takes 2 optional arguments defaulted as shown below
 
 BROWSER="${1:-Google Chrome}"
 TAB_TITLE="${2:-Plaid Quickstart}"

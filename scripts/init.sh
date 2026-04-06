@@ -2,12 +2,81 @@
 
 # This script copies the runtime-environment-specific terraform configuration files
 # to the root folder by running:       .terraform/modules/ec2/scripts/init.sh
+#
+# Sets up terraform workspace, the name based on the local hosting directory name
+# Creates and initializes AWS S3/Dynamodb-based remote state infrastructure
+# Provides API for toggling between remote and local terraform state
 
 # Also propagates the terraform variables and outputs
 # from the root submodule to the current directory
+#
+# Expects no arguments
+
+__min_bash_version=4
+if [[ $( bash --version | head -1 | awk '{print $4}' | cut -d '.' -f 1 ) -lt $__min_bash_version ]]
+then
+    bash --version
+    echo
+    echo "### This process needs bash version $__min_bash_version or higher to work. ###"
+    exit 1
+fi
 
 target="$( pwd )"
+# Set up directory for script links
+targs="..."
+targets="$target/$targs"
+rm -rf "$targets"; mkdir -p "$targets"
+aws_account="$( aws sts get-caller-identity | jq -r '.Account' 2> /dev/null )"
+if [[ -z "$aws_account" ]]; then
+    echo "AWS account needs to be set up first"
+    exit 1
+fi
+
+# Construct workspace name from path to the top-level directory of this deployment
+# N.B.  "_" character is unacceptable in bucket name; using "-"
 workspace_name="$( echo "${PWD#$HOME/}" | tr '/' '_' )"
+
+# Construct the ssh key name
+# as concatenation of first character of each "-"-delimited substring of the workspace name
+unset workspace_key
+IFS_SAVE=$IFS
+IFS='_'; for x in $workspace_name; do workspace_key+=${x: :1}; done
+IFS=$IFS_SAVE
+
+# Evaluate path to the top directory of this module - apex
+apex="$( realpath "$( dirname "$( dirname "$0" )" )" )"
+tfvars="$apex/terraform.tfvars"
+
+# Update tfvars file with the evaluated Name tag, ssh_key_name, and aws_profile
+tag_block="\~^[[:space:]]*tags_bootstrap[[:space:]]*=[[:space:]]*\{~,\~^\}~"
+name_entry="~(^[[:space:]]*Name[[:space:]]=[[:space:]]*\")([^\"]+)(\")~"
+if [[ -s "$tfvars" ]]; then
+    sed -E -i '' -e "
+              ${tag_block}s${name_entry}\1${workspace_name^}\3~;
+              s~(^ssh_key_name[[:space:]]*=[[:space:]]*\")([^\"]+)(\")~\1$workspace_key\3~;
+              s~(^aws_profile[[:space:]]*=[[:space:]]*\")([^\"]+)(\")~\1${AWS_PROFILE:-default}\3~;
+              " "$tfvars"
+fi
+
+# Generate remote backend
+# N.B.  region is restricted to us-east-1
+backend_file_name="backend"
+s3_file="$apex/${backend_file_name}.ft"
+state_file_name="terraform.tfstate"
+cat > "$s3_file" << BEND
+terraform {
+  backend "s3" {
+    bucket         = "${aws_account}-${workspace_name//_/-}-terraform-backend"
+    key            = "${aws_account}-${workspace_name}/$state_file_name"
+    region         = "us-east-1"
+    dynamodb_table = "${aws_account}-${workspace_name}-terraform-state-locking"
+  }
+}
+BEND
+
+# Create s3/dynamodb backend infrastructure
+"$( dirname "$0" )"/terraform_backend.sh remote_state
+
 to_update="main.tf"
 this_module="$(
     egrep -e "^[[:space:]]*module[[:space:]]+[\"][^\"]+[\"][[:space:]]*{" "$to_update" \
@@ -19,15 +88,27 @@ my_root="$( dirname "$origin" )"
 
 # Extra custom scripts developed so far and hosted in the same directory as this script:
 players=(
-    retain_aws_secret.sh
-    destroy_aws_secret.sh
+    "retain_aws_secret.sh=autonomize security manager=zas"
+    "destroy_aws_secret.sh=destroy security manager=zds"
+    "terraform_backend.sh=view remote<->local state source=zrl"
 )
 
+IFS_SAVE=$IFS
+IFS=$'\n'; IFS_SAVEL=$IFS
 pushd "$origin" > /dev/null
-for x in ${players[@]}
-do
-    if [[ -s "$x" ]]; then cp "$x" "$target"; fi
+for l in ${players[@]}; do
+    IFS=$'='
+    read x y z <<< $( echo "$l" )
+    IFS=$IFS_SAVEL
+    xr="$( realpath "$x" )"
+    pushd "$targets" > /dev/null
+    ln -s "$xr" "$y"
+    popd > /dev/null
+    pushd "$target" > /dev/null
+    ln -s "$targs/$y" "$z"
+    popd > /dev/null
 done
+IFS=$IFS_SAVE
 
 # Up to the parent directory for terraform config files:
 cd ..
@@ -165,18 +246,22 @@ FOOT
         IFS=$'\}'
     done > "$output"
 
+    s3_target="$( basename "$s3_file" )"
+    # If 'zrl v' is used after initialization, s3_file may have been moved by zrl
+    [[ -s "$s3_file" ]] && mv "$s3_file" ./"${s3_target%.*}.tf"
+    cd "$target"
+    terraform init -migrate-state -force-copy > /dev/null
     qry_workspace="$( terraform workspace list | grep -o "$workspace_name" )"
     if [[ "$qry_workspace" == "$workspace_name" ]]; then
-        terraform workspace select "$workspace_name"
-    else
-        terraform workspace new "$workspace_name" > /dev/null
+        terraform workspace select default
+        terraform workspace delete "$workspace_name"
     fi
-
+    terraform workspace new "$workspace_name"
     terraform fmt > /dev/null
 fi
 
 if [[ -s "README.md" ]]; then
-    echo "Refer to README.md file for instructions and suggestions."
+    echo -e "\nRefer to README.md file for instructions and suggestions."
 else
     echo "Initialization complete."
 fi

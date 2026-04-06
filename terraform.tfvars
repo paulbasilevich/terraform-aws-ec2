@@ -6,26 +6,26 @@
 deployment_subnet = "private"
 # deployment_subnet = "public"
 
-# Update this variable with the desired ssh key name. ("h" implies "host".)
-ssh_key_name = "h"
+# Update this variable with the desired ssh key name.
+ssh_key_name = "pr"
 
 # Define EC2 instance type for each network, unless t2.micro is good enough.
 subnet_config = [
-    {
-      role = "public"
-      type = "t2.micro"
-    },
-    {
-      role = "private"
-      type = "t2.micro"
-    }
+  {
+    role = "public"
+    type = "t2.micro"
+  },
+  {
+    role = "private"
+    type = "t2.micro"
+  }
 ]
 
 # This is a "<tag name> = <the tag's value prefix>" template map.
 # For each resource, each tag value will be set as <value prefix>-<resource type>.
 # For example, EC2 instance: Name=Sandbox-EC2-private; Tier=Pilot-EC2-private
 tags_bootstrap = {
-  Name = "Sandbox"
+  Name = "Plaid_runit"
   Tier = "Pilot"
 }
 
