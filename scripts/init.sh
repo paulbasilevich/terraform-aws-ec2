@@ -21,6 +21,12 @@ then
     exit 1
 fi
 
+state_type="${1:-remote_state}"
+state_type="${state_type,,}"
+if [[ -n "$1" && "${state_type::1}" != "l" ]]; then
+    echo "Invalid argument \"$1\". Allowed arguments: l[ocal_state] | r[emote_state] (defaulted)"
+    exit 1
+fi
 target="$( pwd )"
 # Set up directory for script links
 targs="..."
@@ -75,7 +81,7 @@ terraform {
 BEND
 
 # Create s3/dynamodb backend infrastructure
-"$( dirname "$0" )"/terraform_backend.sh remote_state
+"$( dirname "$0" )"/terraform_backend.sh "$state_type"
 
 to_update="main.tf"
 this_module="$(
@@ -246,15 +252,17 @@ FOOT
         IFS=$'\}'
     done > "$output"
 
-    s3_target="$( basename "$s3_file" )"
-    # If 'zrl v' is used after initialization, s3_file may have been moved by zrl
-    [[ -s "$s3_file" ]] && mv "$s3_file" ./"${s3_target%.*}.tf"
-    cd "$target"
+    if [[ "${state_type::1}" == "r" ]]; then  # Activate remote state
+        s3_target="$( basename "$s3_file" )"
+        # If 'zrl v' is used after initialization, s3_file may have been moved by zrl
+        [[ -s "$s3_file" ]] && mv "$s3_file" ./"${s3_target%.*}.tf"
+        cd "$target"
+    fi
     terraform init -migrate-state -force-copy > /dev/null
     qry_workspace="$( terraform workspace list | grep -o "$workspace_name" )"
     if [[ "$qry_workspace" == "$workspace_name" ]]; then
-        terraform workspace select default
-        terraform workspace delete "$workspace_name"
+        terraform workspace select default > /dev/null
+        terraform workspace delete "$workspace_name" > /dev/null
     fi
     terraform workspace new "$workspace_name"
     terraform fmt > /dev/null

@@ -22,7 +22,7 @@ then
         do
             terraform state rm "$fullspec" > /dev/null
         done
-        echo -e "Done.\nTo destroy the rest of the deployed resourses run: terraform destroy -auto-approve"
+        echo -e "Done. (To destroy the rest of the deployed resourses run: terraform destroy -auto-approve.)"
     fi
 else
     echo "Module <${module}> is not managed by terraform."

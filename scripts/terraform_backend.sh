@@ -6,7 +6,7 @@ trap 'for tf in $( . ws "$temp_file_prefix" ); do rm -f "${tf#*=}"; done' EXIT
 
 mode="${1}"
 if [[ -z "$mode" ]]; then
-    echo "Terraform backend handler (alias tbe)."
+    echo "Terraform backend handler (alias zrl)."
     echo "Usage:    zrl <mode> -- where "mode" is: r[emote_state] | l[ocal_state] | v[iew_state_source]"
     exit 1
 fi
@@ -14,6 +14,8 @@ fi
 home="$( pwd )"
 mode="${mode::1}"
 mode="${mode,,}"
+# Check if the script is called from init.sh or command line
+called_from="$( basename "$( ps -o command= $PPID | awk '{print $2}' )" )"
 
 # Use ".ft" instead of ".tf" to preclude early warning for "terraform init"
 infra_source="$(
@@ -84,7 +86,6 @@ case "$mode" in
 
              # Skip "terraform init" if this script is called from init.sh
              # Otherwise, run "terraform init" assuming toggle belween local and remote state
-             called_from="$( basename "$( ps -o command= $PPID | awk '{print $2}' )" )"
              if [[ "$called_from" != "init.sh" ]]; then
                  backend_name="$( basename "$infra_source" )"
                  [[ -s "${infra_source}" ]] && mv "${infra_source}" "${home}/${backend_name%.*}.tf"
@@ -95,7 +96,7 @@ case "$mode" in
 		 echo "$state_mode state is in effect"
          ;;
 	"l") # Reinstate local state:
-         if [[ "$state_type" == "tf" ]]; then
+        if [[ "$state_type" == "tf" || "$called_from" == "init.sh" ]]; then
              apex="$( dirname "$( dirname "$( realpath "$0" )" )" )"
              target_name="$( basename "$infra_source" )"
              cd "$home"
@@ -110,11 +111,11 @@ case "$mode" in
              fi
 
              # Delete dynamodb table vvvvv
-             echo "Removing the remote state infrastructure..."
+             echo "Cleaning up the remote state infrastructure..."
              aws dynamodb delete-table --table-name "$dynamodb_table" --region "$region" > /dev/null 2>&1
              aws dynamodb wait table-not-exists --table-name "$dynamodb_table" --region "$region"
              # vvv Reinstate output for details: => "... # > /dev/null  vvv
-             aws dynamodb list-tables  --region "$region" \
+             aws dynamodb list-tables --region "$region" \
                 | jq -r '.TableNames' | sed -e "s~^\[\]$~No tables found.~" > /dev/null
 
              # Delete s3 bucket vvvvv
