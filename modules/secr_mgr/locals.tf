@@ -15,5 +15,5 @@ locals {
 }
 
 locals {
-  aws_secret_name = "${element(values(var.tags_bootstrap), 0)}-secret"
+  aws_secret_name = "${element(values(var.tags_bootstrap), 0)}-safe"
 }
