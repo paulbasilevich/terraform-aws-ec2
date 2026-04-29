@@ -31,6 +31,7 @@ PORT=3000
 if [[ -d "$PLAID_HOME" ]]; then rm -rf "$PLAID_HOME"; fi
 git clone https://github.com/plaid/quickstart.git "$PLAID_HOME" > /dev/null
 pushd "$PLAID_HOME" > /dev/null
+git reset --hard a1fe987
 cp .env.example .env
 sed -E -i '' -e "s~(PLAID_CLIENT_ID=)([[:print:]]*)~\1$PLAID_CLIENT_ID~; \
                  s~(PLAID_SECRET=)([[:print:]]*)~\1$PLAID_SECRET~; \
