@@ -1,16 +1,11 @@
-output "_" {
-  description = "Shell command to connect to the target host"
-  value       = module.ec2_inst._
+output "_-" {
+  description = "Shell command to connect to the web server host"
+  value       = module.ec2_inst._-
 }
 
-output "public_ip" {
-  description = "Public IP address of the just-created EC2 instance"
-  value       = module.ec2_inst.public_ip
-}
-
-output "private_ip" {
-  description = "Private IP address of the just-created EC2 instance"
-  value       = module.ec2_inst.private_ip
+output "__" {
+  description = "Shell command to connect to the load balancer (bastion) host"
+  value       = module.ec2_inst.__
 }
 
 output "ec2_instance_type" {
@@ -18,19 +13,14 @@ output "ec2_instance_type" {
   value       = module.ec2_inst.ec2_instance_type
 }
 
-output "ssh_key_name" {
-  description = "Name of the created key pair for ssh access to the instance"
-  value       = module.ec2_inst.ssh_key_name
-}
-
 output "aws_profile" {
   description = "Name of the AWS profile where the EC2 instance is deployed"
   value       = module.ec2_inst.aws_profile
 }
 
-output "time" {
+output "deployed_at" {
   description = "Time formatted and adjusted to PST/PDT"
-  value       = module.ec2_inst.time
+  value       = module.ec2_inst.deployed_at
 }
 
 output "ami_name" {
@@ -43,13 +33,17 @@ output "cidr_block" {
   value       = module.ec2_inst.cidr_block
 }
 
-output "aws_secret_name" {
-  description = "Name of the AWS secret"
-  value       = module.ec2_inst.aws_secret_name
+output "common_tags" {
+  description = "Tag prefix to be applied to all resource tags."
+  value       = module.ec2_inst.common_tags
 }
 
-output "scripts_home" {
-  description = "Centralized location of the shell scripts"
-  value       = module.ec2_inst.scripts_home
+output "subnet_access" {
+  description = "Label subnets as public and private, if the web host runs in private"
+  value = module.ec2_inst.subnet_access
 }
 
+output "lb_dns_name" {
+  description = "DNS record of the AWS Load balancer to check before starting front end"
+  value = module.ec2_inst.lb_dns_name
+}

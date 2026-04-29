@@ -15,23 +15,27 @@
 # Input arguments:
 # $1 - 0 - for public subnet; 1 - for private subnet
 # $2 - the number of instances deployed: 1 - one in the public subnet; 2 - another one in the private subnet
-# $3 - the name of the AWS key pair
-# $4 - user name for ssh connection to the EC2 instances
-# $5 - EC2 instance ID the ~/.ssh/config file is being updated for
-# $6 - the private IP address of the current EC2 instance
-# $7 - the public IP of the same instance (or "null" for the instance deployed in the private subnet)
+# $3 - the name of the AWS key pair for ssh access to EC2 instances
+# $4 - suffix appended to the .ssh/config "Host" name of the "private" EC2 to make the "Host" name for the public one
+# $5 - user name for ssh connection to the EC2 instances
+# $6 - EC2 instance ID the ~/.ssh/config file is being updated for
+# $7 - the private IP address of the current EC2 instance
+# $8 - the public IP of the same instance (or "null" for the instance deployed in the private subnet)
+# $9 - additional "Host" name, typically short, for optional simplifying ssh command signature
 
 subnet_index="$1"
 ec2_instance_count="$2"
 key_name="$3"
-user="$4"
-instance_id="$5"
-private_ip="$6"
-public_ip="$7"
+public_suffix="$4"
+user="$5"
+instance_id="$6"
+private_ip="$7"
+public_ip="$8"
+# alias host name - to save typing; "h" stands for "host"
+static_extra_key="${9:-h}"
 
 config_file=~/.ssh/config
 config_save=~/.ssh/config_backup_tf
-public_suffix="jump"
 
 aws ec2 wait instance-status-ok --instance-ids "$instance_id"
 
@@ -39,15 +43,20 @@ aws ec2 wait instance-status-ok --instance-ids "$instance_id"
 if [[ $subnet_index -eq 0 ]]
 then
     case $ec2_instance_count in
-        1) host_name="$key_name" ;;
-        *) host_name="${key_name}_${public_suffix}" ;;
+        1) host_name="$key_name $static_extra_key" ;;
+        *) host_name="${key_name}${public_suffix} ${static_extra_key}${public_suffix}" ;;
     esac
     host_ip="$public_ip"
     cp -fp "$config_file" "$config_save"
 else
-    host_name="$key_name"
+    host_name="$key_name $static_extra_key"
     host_ip="$private_ip"
-fi    
+fi
+
+if [[ ! -d ~/.ssh ]]; then
+    midir -p ~/.ssh
+    chmod -R 700 ~/.ssh
+fi
 
 cat >> $config_file << TAG
 Host $host_name
@@ -62,7 +71,7 @@ TAG
 if [[ $subnet_index -ne 0 ]]
 then
     cat >> $config_file << TAG1
-    ProxyJump ${key_name}_${public_suffix}
+    ProxyJump ${key_name}${public_suffix}
 TAG1
 fi
 

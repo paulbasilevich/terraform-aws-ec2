@@ -1,4 +1,3 @@
 locals {
-  cidr_blocks = module.cidr_blk.cidr_blocks
+  cidr_blocks = module.vpc.cidr_blocks
 }
-

@@ -1,9 +1,5 @@
 locals {
-  time = format("%s PDT", formatdate("DD MMM YYYY hh:mm:ss", timeadd(timestamp(), "-7h")))
-}
-
-locals {
-  smirk_root_directory = module.key_pair.ssh_key_name
+  pilot_root_directory = module.key_pair.ssh_key_name
 }
 
 locals {
@@ -19,21 +15,3 @@ locals {
   }
 }
 
-locals {
-  instance_config = [
-    {
-      role = "public"
-      snid = module.security.public_subnet_id
-      prip = join("", [regex("((\\d{1,3}.){3})", module.security.public_subnet_cidr)[0], "10"])
-    },
-    {
-      role = "private"
-      snid = module.security.private_subnet_id
-      prip = join("", [regex("((\\d{1,3}.){3})", module.security.private_subnet_cidr)[1], "10"])
-    }
-  ]
-}
-
-locals {
-  ec2_instance_count = var.deployment_subnet == "public" ? 1 : 2
-}

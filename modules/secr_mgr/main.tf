@@ -6,7 +6,7 @@ module "provider" {
 data "external" "locate_aws_secret" {
   program = ["bash", "${var.scripts_home}/find_aws_secret.sh"]
   query = {
-    aws_secret_name = var.aws_secret_name
+    aws_secret_name = local.aws_secret_name
   }
 }
 
@@ -15,13 +15,14 @@ data "external" "check_env" {
   program    = ["bash", "${var.scripts_home}/check_env.sh"]
   query = {
     aws_secret_status = local.aws_secret_status
+    plaid_external    = var.plaid_external
   }
 
   lifecycle {
     postcondition {
       condition     = tonumber(join(", ", split(" ", self.result["env_status"]))) == 0
       error_message = <<-EOT
-      Insofar as "${var.aws_secret_name}" AWS SecretsManager object is currently unavailable,
+      Insofar as "${local.aws_secret_name}" AWS SecretsManager object is currently unavailable,
       the system looks for Plaid credentials in the local profile.
 
       Make sure that the following environment variables are defined in ~/.bash_profile file:
@@ -34,24 +35,27 @@ data "external" "check_env" {
   }
 }
 
-resource "aws_secretsmanager_secret" "smirk" {
-  name                    = var.aws_secret_name
+resource "aws_secretsmanager_secret" "pilot" {
+  name                    = local.aws_secret_name
   recovery_window_in_days = 0
   count                   = local.aws_secret_status != 0 ? 1 : 0
 }
 
-resource "aws_secretsmanager_secret_version" "smirk" {
-  secret_id     = aws_secretsmanager_secret.smirk[0].id
-  secret_string = jsonencode(tomap({ "${var.client_var_name}" = local.plaid_client_id, "${var.secret_var_name}" = local.plaid_secret }))
-  count         = local.aws_secret_status != 0 ? 1 : 0
+resource "aws_secretsmanager_secret_version" "pilot" {
+  secret_id = aws_secretsmanager_secret.pilot[0].id
+  secret_string = jsonencode(tomap(
+    { "${var.client_var_name}" = local.plaid_client_id,
+    "${var.secret_var_name}" = local.plaid_secret }
+  ))
+  count = local.aws_secret_status != 0 ? 1 : 0
 }
 
-data "aws_secretsmanager_secret" "smirk" {
-  name  = var.aws_secret_name
+data "aws_secretsmanager_secret" "pilot" {
+  name  = local.aws_secret_name
   count = local.aws_secret_status == 0 ? 1 : 0
 }
 
-data "aws_secretsmanager_secret_version" "smirk" {
-  secret_id = data.aws_secretsmanager_secret.smirk[0].id
+data "aws_secretsmanager_secret_version" "pilot" {
+  secret_id = data.aws_secretsmanager_secret.pilot[0].id
   count     = local.aws_secret_status == 0 ? 1 : 0
 }

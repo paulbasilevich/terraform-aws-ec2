@@ -19,7 +19,7 @@ variable "secret_var_name" {
 variable "aws_secret_name" {
   type        = string
   description = "Name of the AWS secret"
-  default     = "Plaid_Credentials"
+  default     = "Vault"
 }
 
 variable "scripts_home" {
@@ -28,3 +28,16 @@ variable "scripts_home" {
   default     = "./scripts"
 }
 
+variable "plaid_external" {
+  type        = bool
+  description = "Enforce external Plaid credentials"
+  default     = false
+}
+
+variable "tags_bootstrap" {
+  description = "Blueprint for tags to be generated from and applied to all resources"
+  type        = map(string)
+  default = {
+    Name = "Showcase"
+  }
+}

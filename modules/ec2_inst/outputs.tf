@@ -1,36 +1,20 @@
-output "_" {
-  description = "Shell command to connect to the target host"
-  value       = "Connect to the deployed instance: >>> ssh ${module.key_pair.ssh_key_name} <<<  "
+output "_-" {
+  description = "Shell command to connect to the web server host"
+  value       = "SSH to web server host : ssh ${module.key_pair.ssh_key_name}"
 }
 
-# output "IP" {
-#   description = "Sample zipmap: instance-id -> public_ip, private_ip"
-#   value = zipmap(
-#     [aws_instance.tf["tf"].id],
-#     [[aws_instance.tf["tf"].public_ip, aws_instance.tf["tf"].private_ip]]
-#
-#   )
-# }
-#
-
-output "public_ip" {
-  description = "Public IP address of the just-created EC2 instance"
-  value       = join(", ", aws_instance.smirk[*].public_ip)
-}
-
-output "private_ip" {
-  description = "Private IP address of the just-created EC2 instance"
-  value       = join(", ", aws_instance.smirk[*].private_ip)
+output "__" {
+  description = "Shell command to connect to the front-end host"
+  value = (
+    module.security.ec2_instance_count > 1
+    ? "SSH to front-end host  : ssh ${module.key_pair.ssh_key_name}${var.lb_suffix}"
+    : null
+  )
 }
 
 output "ec2_instance_type" {
   description = "Type of the just-created EC2 instance"
-  value       = join(", ", aws_instance.smirk[*].instance_type)
-}
-
-output "ssh_key_name" {
-  description = "Name of the created key pair for ssh access to the instance"
-  value       = module.key_pair.ssh_key_name
+  value       = join(", ", aws_instance.pilot[*].instance_type)
 }
 
 output "aws_profile" {
@@ -38,9 +22,9 @@ output "aws_profile" {
   value       = module.security.aws_profile
 }
 
-output "time" {
+output "deployed_at" {
   description = "Time formatted and adjusted to PST/PDT"
-  value       = local.time
+  value       = module.security.deployed_at
 }
 
 output "ami_name" {
@@ -53,13 +37,22 @@ output "cidr_block" {
   value       = module.security.cidr_block
 }
 
-output "aws_secret_name" {
-  description = "Name of the AWS secret"
-  value       = module.key_pair.aws_secret_name
+output "common_tags" {
+  description = "Tag prefix to be applied to all resource tags."
+  value       = join(", ", [for k, v in module.security.common_tags[0] : "${k} = ${regex("[^-]+", "${v}")}"])
 }
 
-output "scripts_home" {
-  description = "Centralized location of the shell scripts"
-  value       = var.scripts_home
+output "subnet_access" {
+  description = "Label subnets as public and private, if the web host runs in private"
+  value = (
+    module.security.ec2_instance_count > 1
+    ? join(", ", [for x in module.security.subnet_suffix : regex("[^-]+", x)])
+    : null
+  )
+}
+
+output "lb_dns_name" {
+  description = "DNS record of the AWS Load balancer to check before starting front end"
+  value       = module.security.lb_dns_name
 }
 

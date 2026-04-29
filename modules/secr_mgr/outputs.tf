@@ -12,7 +12,7 @@ output "plaid_secret" {
 
 output "aws_secret_name" {
   description = "Name of the AWS secret"
-  value       = var.aws_secret_name
+  value       = local.aws_secret_name
 }
 
 output "scripts_home" {
@@ -28,4 +28,9 @@ output "env_status" {
 output "aws_secret_status" {
   description = "Indicates whether the credentials are available"
   value       = local.aws_secret_status
+}
+
+output "plaid_external" {
+  description = "Enforce external Plaid credentials"
+  value       = var.plaid_external
 }
